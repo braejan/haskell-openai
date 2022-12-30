@@ -39,5 +39,5 @@ main = do
       -- Handle the error
       putStrLn $ "Error making the request: " ++ show error
 ```
+![Sonatype Lift](https://lift.sonatype.com/api/badge/github.com/braejan/haskell-gpt3)
 
-![image](https://lift.sonatype.com/api/badge/github.com/braejan/haskell-gpt3)
