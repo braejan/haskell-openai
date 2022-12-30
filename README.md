@@ -40,4 +40,4 @@ main = do
       putStrLn $ "Error making the request: " ++ show error
 ```
 
-https://lift.sonatype.com/api/badge/github.com/braejan/haskel-gpt3
+https://lift.sonatype.com/api/badge/github.com/braejan/haskell-gpt3
