@@ -39,3 +39,5 @@ main = do
       -- Handle the error
       putStrLn $ "Error making the request: " ++ show error
 ```
+
+https://lift.sonatype.com/api/badge/github.com/braejan/haskel-gpt3
