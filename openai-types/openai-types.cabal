@@ -53,6 +53,7 @@ library
     exposed-modules:
         OpenAI.Types.Request
         OpenAI.Types.Response
+        OpenAI.Types.Choice
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -89,6 +90,7 @@ test-suite openai-types-test
 
     other-modules: 
         OpenAI.Types.RequestTest
+        OpenAI.Types.ChoiceTest
     -- Test dependencies.
     build-depends:
         aeson,
