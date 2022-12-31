@@ -1,0 +1,7 @@
+packages:
+  openai-types
+
+-- Specify the package dependencies for foo-package
+-- package foo-package
+--  dependencies:
+--    bar-package
