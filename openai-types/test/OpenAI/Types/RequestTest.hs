@@ -1,5 +1,4 @@
-{-# LANGUAGE BlockArguments #-}
-module GPT3.Types.OpenAI.RequestTest where
+module OpenAI.Types.RequestTest where
 
 import Data.Aeson
 import Data.ByteString.Lazy (ByteString)
@@ -7,7 +6,7 @@ import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import GPT3.Types.OpenAI.Request (OpenAIRequest(..))
+import OpenAI.Types.Request(OpenAIRequest(..))
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
@@ -16,7 +15,7 @@ import Data.Either (isLeft)
 -- Test suite definition
 allRequestTest :: TestTree
 allRequestTest =
-  testGroup "Test suite for Module gpt3-types: Request"
+  testGroup "Test suite for Module openai-types: Request"
     [ testSerializationAnDeserialization,
       testStringSerialization
     ]
