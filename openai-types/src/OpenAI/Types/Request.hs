@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
-module GPT3.Types.OpenAI.Request where
+module OpenAI.Types.Request where
 
 import Data.Text (Text, pack)
 import GHC.Generics (Generic)

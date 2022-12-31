@@ -1,3 +1,4 @@
+
 # Welcome to the Haskell OpenAI API library!
 
 This library provides a wrapper for the OpenAI API, making it easy to implement services exposed by the OpenAI API in your Haskell projects. With this library, you can perform basic query operations on the OpenAI API with just a few lines of code.
@@ -17,19 +18,15 @@ Once you have your API key, you can use the library like this:
 
 ```haskell
 import qualified OpenAI
-
 -- Your OpenAI API key
 apiKey :: Text
 apiKey = "Your API key here"
-
 main :: IO ()
 main = do
   -- Initialize the OpenAI client with your API key
   client <- OpenAI.newClient apiKey
-
   -- Make a request to the OpenAI API
   response <- OpenAI.request client (OpenAI.Completion "Write something here")
-
   -- Process the response from the API
   case response of
     Right result ->
@@ -39,5 +36,4 @@ main = do
       -- Handle the error
       putStrLn $ "Error making the request: " ++ show error
 ```
-![Sonatype Lift](https://lift.sonatype.com/api/badge/github.com/braejan/haskell-gpt3)
-
+https://lift.sonatype.com/api/badge/github.com/braejan/haskell-openai

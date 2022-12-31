@@ -1,4 +1,4 @@
-# Revision history for gpt3-types
+# Revision history for openai-types
 
 ## 0.1.0.0 -- YYYY-mm-dd
 
