@@ -9,9 +9,9 @@ import OpenAI.Types.Choice
 import OpenAI.Types.Usage
 -- | Data type representing a response from the OpenAI API
 data OpenAIResponse = OpenAIResponse
-  { responseId :: Text
+  { id :: Text
     -- ^ The ID of the response
-  , responseObject :: Text
+  , object :: Text
     -- ^ The type of the response object (e.g. "text_completion")
   , created :: Int
     -- ^ The timestamp of when the response was created

@@ -93,6 +93,7 @@ test-suite openai-types-test
         OpenAI.Types.RequestTest
         OpenAI.Types.ChoiceTest
         OpenAI.Types.UsageTest
+        OpenAI.Types.ResponseTest
     -- Test dependencies.
     build-depends:
         aeson,

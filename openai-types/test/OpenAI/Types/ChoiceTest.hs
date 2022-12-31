@@ -12,6 +12,9 @@ import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
 
 
+jsonString :: String
+jsonString = "{\"text\": \"This is indeed a test\", \"index\": 0, \"logprobs\": null, \"finish_reason\": \"length\"}"
+
 -- Test suite definition
 allChoiceTest :: TestTree
 allChoiceTest =
@@ -24,7 +27,7 @@ allChoiceTest =
 testSerializationAnDeserialization :: TestTree
 testSerializationAnDeserialization =
   testCase "Serialize and deserialize a Choice JSON" $ do
-    let expected = Choice (pack "This is indeed a test") 0 (Just []) (pack "")
+    let expected = createDefaultChoice
         json = encode expected
         choice' = decode json
     assertEqual "1=>Deserialized value should match original value" (Just expected) choice'
@@ -32,7 +35,7 @@ testSerializationAnDeserialization =
 -- Test case 2:
 testStringSerialization :: TestTree
 testStringSerialization = testCase "Serialization of String value" $ do
-  let json = BS.pack "{\"text\": \"This is indeed a test\", \"index\": 0, \"logprobs\": null, \"finish_reason\": \"length\"}"
+  let json = BS.pack jsonString
       expected = Right createDefaultChoice
       actual = eitherDecode json :: Either String Choice
   assertEqual "2=>Parsed value should match expected value" expected actual
@@ -48,7 +51,7 @@ testEmptyStringSerialization = testCase "Serialization of a Empty string value" 
 -- Test case 4:
 testDeSerialization :: TestTree
 testDeSerialization = testCase "Deserialization of a default Choice test to String." $ do
-  let expected = BS.pack "{\"text\": \"This is indeed a test\", \"index\": 0, \"logprobs\": null, \"finish_reason\": \"length\"}"
+  let expected = BS.pack jsonString
   let choice = createDefaultChoice
   let actual = encode choice
   assertEqual "4=>Parsed value should match expected value" expected actual
