@@ -11,7 +11,7 @@ tests =
   testGroup "Test suite for Module openai-types"
     [ --allRequestTest
      allChoiceTest
-     --,allUsageTest
+     ,allUsageTest
      --,allResponseTest
     ]
 
