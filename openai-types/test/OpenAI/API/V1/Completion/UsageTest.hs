@@ -1,4 +1,4 @@
-module OpenAI.Types.UsageTest where
+module OpenAI.API.V1.Completion.UsageTest where
 
 import Data.Aeson
 import Data.ByteString.Lazy (ByteString)
@@ -6,18 +6,23 @@ import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import OpenAI.Types.Usage(Usage(..))
+import OpenAI.API.V1.Completion.Usage(Usage(..))
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
 
+
+jsonString :: String
+jsonString = "{\"prompt_tokens\":5,\"completion_tokens\":7,\"total_tokens\":12}"
 
 -- Test suite definition
 allUsageTest :: TestTree
 allUsageTest =
   testGroup "Test suite for Module openai-types: Usage"
     [ testSerializationAnDeserialization,
-      testStringSerialization
+      testStringSerialization,
+      testEmptyStringSerialization,
+      testDeSerialization
     ]
 
 -- Test case 1:
@@ -32,7 +37,7 @@ testSerializationAnDeserialization =
 -- Test case 2:
 testStringSerialization :: TestTree
 testStringSerialization = testCase "Serialization of String value" $ do
-  let json = BS.pack "{\"prompt_tokens\": 5, \"completion_tokens\": 7, \"total_tokens\": 12}"
+  let json = BS.pack jsonString
       expected = Right createDefaultUsage
       actual = eitherDecode json :: Either String Usage
   assertEqual "2=>Parsed value should match expected value" expected actual
@@ -48,7 +53,7 @@ testEmptyStringSerialization = testCase "Serialization of a Empty string value" 
 -- Test case 4:
 testDeSerialization :: TestTree
 testDeSerialization = testCase "Deserialization of a default Usage test to String." $ do
-  let expected = BS.pack "{\"text\": \"This is indeed a test\", \"index\": 0, \"logprobs\": null, \"finish_reason\": \"length\"}"
+  let expected = BS.pack jsonString
   let usage = createDefaultUsage
   let actual = encode usage
   assertEqual "4=>Parsed value should match expected value" expected actual
