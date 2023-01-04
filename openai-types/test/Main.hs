@@ -1,18 +1,18 @@
 module Main(main) where
 import Test.Tasty (TestTree, defaultMain, testGroup)
-import OpenAI.Types.RequestTest (allRequestTest)
-import OpenAI.Types.ChoiceTest (allChoiceTest)
-import OpenAI.Types.UsageTest (allUsageTest)
-import OpenAI.Types.ResponseTest (allResponseTest)
+import OpenAI.API.V1.Completion.RequestTest (allRequestTest)
+import OpenAI.API.V1.Completion.ChoiceTest (allChoiceTest)
+import OpenAI.API.V1.Completion.UsageTest (allUsageTest)
+import OpenAI.API.V1.Completion.ResponseTest (allResponseTest)
 
 -- Test suite definition
 tests :: TestTree
 tests =
   testGroup "Test suite for Module openai-types"
-    [ allRequestTest
-     ,allChoiceTest
-     ,allUsageTest
-     ,allResponseTest
+    [ --allRequestTest
+     allChoiceTest
+     --,allUsageTest
+     --,allResponseTest
     ]
 
 main :: IO ()

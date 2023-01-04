@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
-module OpenAI.Types.Usage where
+module OpenAI.API.V1.Completion.Usage where
 
 import Data.Text (Text, pack)
 import GHC.Generics (Generic)

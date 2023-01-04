@@ -1,4 +1,4 @@
-module OpenAI.Types.ChoiceTest where
+module OpenAI.API.V1.Completion.ChoiceTest where
 
 import Data.Aeson
 import Data.ByteString.Lazy (ByteString)
@@ -6,21 +6,27 @@ import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import OpenAI.Types.Choice(Choice(..))
+import OpenAI.API.V1.Completion.Choice(Choice(..))
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
 
 
 jsonString :: String
-jsonString = "{\"text\": \"This is indeed a test\", \"index\": 0, \"logprobs\": null, \"finish_reason\": \"length\"}"
+jsonString = "{\"text\":\"This is indeed a test\",\"index\":0,\"finish_reason\":\"length\"}"
+
+jsonStringAllFields :: String
+jsonStringAllFields = "{\"text\":\"This is indeed a test\",\"index\":0,\"logprobs\":[0.0,1.0,2.0],\"finish_reason\":\"length\"}"
 
 -- Test suite definition
 allChoiceTest :: TestTree
 allChoiceTest =
   testGroup "Test suite for Module openai-types: Choice"
     [ testSerializationAnDeserialization,
-      testStringSerialization
+      testStringSerialization,
+      testEmptyStringSerialization,
+      testDeSerialization,
+      testDeSerializationLogprobs
     ]
 
 -- Test case 1:
@@ -56,18 +62,28 @@ testDeSerialization = testCase "Deserialization of a default Choice test to Stri
   let actual = encode choice
   assertEqual "4=>Parsed value should match expected value" expected actual
 
-
--- | Create a new 'Choice' value with the given parameters
-createChoice :: String -> Int -> Maybe [Double] -> String -> Choice
-createChoice t i l fr
-  | t /= "" = Choice (pack t) i l (pack fr)
-  | otherwise =  Choice (pack "This is indeed a test") 0 Nothing (pack "length")
-
+-- Test case 5:
+testDeSerializationLogprobs :: TestTree
+testDeSerializationLogprobs = testCase "Deserialization of a default Choice test to String." $ do
+  let expected = BS.pack jsonStringAllFields
+  let choice = createDefaultChoice {logprobs = Just [0.0,1.0,2.0]}
+  let actual = encode choice
+  assertEqual "5=>Parsed value should match expected value" expected actual
 
 -- | Create a new 'Choice' value with default test values
-createDefaultChoice :: Choice
-createDefaultChoice = createChoice "" 0 Nothing ""
+createDefaultChoice = Choice
+  {
+  text = pack "This is indeed a test",
+  index = 0,
+  logprobs = Nothing,
+  finishReason = pack "length"
+  }
 
 -- | Create a new 'Choice' value with default test values
 createEmptyChoice :: Choice
-createEmptyChoice = Choice (pack "") 0 (Just []) (pack "")
+createEmptyChoice = Choice
+  { text = pack ""
+  , index = 0
+  , logprobs = Nothing
+  , finishReason = pack ""
+  }
