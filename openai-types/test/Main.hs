@@ -9,8 +9,8 @@ import OpenAI.API.V1.Completion.ResponseTest (allResponseTest)
 tests :: TestTree
 tests =
   testGroup "Test suite for Module openai-types"
-    [ --allRequestTest
-     allChoiceTest
+    [ allRequestTest
+     ,allChoiceTest
      ,allUsageTest
      --,allResponseTest
     ]

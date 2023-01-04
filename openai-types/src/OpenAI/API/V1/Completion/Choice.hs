@@ -34,7 +34,7 @@ instance FromJSON Choice where
   parseJSON (Object o) = do
     text <- o .: fromString "text"
     index <- o .: fromString "index"
-    finishReason <- o .: fromString "finish_reason"
     logprobs <- o .:? fromString "logprobs"
+    finishReason <- o .: fromString "finish_reason"
     return $ Choice {..}
   parseJSON invalid = typeMismatch "Choice" invalid
