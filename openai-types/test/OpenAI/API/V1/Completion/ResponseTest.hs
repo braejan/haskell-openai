@@ -16,7 +16,7 @@ import OpenAI.API.V1.Completion.Choice (Choice)
 import OpenAI.API.V1.Completion.Usage (Usage)
 
 jsonString :: String
-jsonString = "{\"id\":\"cmpl-GERzeJQ4lvqPk8SkZu4XMIuR\",\"object\":\"text_completion\",\"created\":1586839808,\"model\":\"text-davinci:003\",\"choices\":[{\"text\":\"This is indeed a test\",\"index\":0,\"logprobs\":null,\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":7,\"total_tokens\":12}}"
+jsonString = "{\"id\":\"cmpl-GERzeJQ4lvqPk8SkZu4XMIuR\",\"object\":\"text_completion\",\"created\":1586839808,\"model\":\"text-davinci:003\",\"choices\":[{\"text\":\"This is indeed a test\",\"index\":0,\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":7,\"total_tokens\":12}}"
 
 -- Test suite definition
 allResponseTest :: TestTree

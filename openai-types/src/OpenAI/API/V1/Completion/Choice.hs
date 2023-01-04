@@ -20,8 +20,6 @@ data Choice = Choice
   } deriving (Show, Eq, Generic)
 
 instance ToJSON Choice where
-  toJSON = genericToJSON options { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_') }
-    where options = defaultOptions { omitNothingFields = True }
   toEncoding Choice {..} = pairs $ mconcat
     [ fromString "text" .= text
     , fromString "index" .= index

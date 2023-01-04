@@ -25,8 +25,6 @@ data Usage = Usage
 --     toJSON = genericToJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
 
 instance ToJSON Usage where
-  toJSON = genericToJSON options { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_') }
-    where options = defaultOptions { omitNothingFields = True }
   toEncoding Usage{..} = pairs $ mconcat
     [ fromString "prompt_tokens" .= promptTokens
     , fromString "completion_tokens" .= completionTokens

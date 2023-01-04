@@ -1,12 +1,14 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE RecordWildCards #-}
 module OpenAI.API.V1.Completion.Response where
 
 import Data.Text (Text, pack)
 import GHC.Generics (Generic)
-import Data.Aeson (FromJSON (parseJSON), Options (fieldLabelModifier), genericParseJSON, defaultOptions, camelTo2, ToJSON, genericToJSON)
-import Data.Aeson.Types (ToJSON(toJSON))
+import Data.Aeson (FromJSON (parseJSON), Options (fieldLabelModifier), genericParseJSON, defaultOptions, camelTo2, ToJSON (toEncoding), genericToJSON, pairs, KeyValue ((.=)), Value (Object), (.:))
+import Data.Aeson.Types (ToJSON(toJSON), typeMismatch)
 import OpenAI.API.V1.Completion.Choice
 import OpenAI.API.V1.Completion.Usage
+import Data.Aeson.Key (fromString)
 -- | Data type representing a response from the OpenAI API
 data Response = Response
   { id :: Text
@@ -23,8 +25,23 @@ data Response = Response
     -- ^ An 'Usage' object representing the usage details for the response
   } deriving (Show, Eq, Generic)
 
-instance FromJSON Response where
-  parseJSON = genericParseJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
-
 instance ToJSON Response where
-    toJSON = genericToJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
+  toEncoding Response {..} = pairs $ mconcat
+    [ fromString "id" .= id
+    , fromString "object" .= object
+    , fromString "created" .= created
+    , fromString "model" .= model
+    , fromString "choices" .= choices
+    , fromString "usage" .= usage
+    ]
+
+instance FromJSON Response where
+  parseJSON (Object o) = do
+    id <- o .: fromString "id"
+    object <- o .: fromString "object"
+    created <- o .: fromString "created"
+    model <- o .: fromString "model"
+    choices <- o .: fromString "choices"
+    usage <- o .: fromString "usage"
+    return $ Response{..}
+  parseJSON invalid = typeMismatch "Response" invalid

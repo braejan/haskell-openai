@@ -60,36 +60,24 @@ data Request = Request
   -- ^ Optional.
   } deriving (Show, Eq, Generic)
 
--- instance ToJSON Choice where
---   toJSON = genericToJSON options { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_') }
---     where options = defaultOptions { omitNothingFields = True }
---   toEncoding Choice {..} = pairs $ mconcat
---     [ fromString "text" .= text
---     , fromString "index" .= index
---     , maybe mempty (\ x -> fromString "logprobs" .= x) logprobs
---     , fromString "finish_reason" .= finishReason
---     ]
-
 instance ToJSON Request where
-  toJSON = genericToJSON options { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_') }
-    where options = defaultOptions { omitNothingFields = True }
   toEncoding Request {..} = pairs $ mconcat
     [ fromString "model" .= model
     , maybe mempty parseFromEitherTextOrArrayText prompt "prompt"
-    , maybe mempty (\x -> fromString "suffix" .= x) suffix
-    , maybe mempty (\x -> fromString "max_tokens" .= x) maxTokens
-    , maybe mempty (\x -> fromString "temperature" .= x) temperature
-    , maybe mempty (\x -> fromString "top_p" .= x) topP
-    , maybe mempty (\x -> fromString "n" .= x) n
-    , maybe mempty (\x -> fromString "stream" .= x) stream
-    , maybe mempty (\x -> fromString "logprobs" .= x) logprobs
-    , maybe mempty (\x -> fromString "echo" .= x) echo
+    , maybeEmpty "suffix" suffix
+    , maybeEmpty "max_tokens" maxTokens
+    , maybeEmpty "temperature" temperature
+    , maybeEmpty "top_p" topP
+    , maybeEmpty "n" n
+    , maybeEmpty "stream" stream
+    , maybeEmpty "logprobs" logprobs
+    , maybeEmpty "echo" echo
     , maybe mempty parseFromEitherTextOrArrayText stop "stop"
-    , maybe mempty (\x -> fromString "presence_penalty" .= x) presencePenalty
-    , maybe mempty (\x -> fromString "frequency_penalty" .= x) frequencyPenalty
-    , maybe mempty (\x -> fromString "best_of" .= x) bestOf
-    , maybe mempty (\x -> fromString "logit_bias" .= x) logitBias
-    , maybe mempty (\x -> fromString "user" .= x) user
+    , maybeEmpty "presence_penalty" presencePenalty
+    , maybeEmpty "frequency_penalty" frequencyPenalty
+    , maybeEmpty "best_of" bestOf
+    , maybeEmpty "logit_bias" logitBias
+    , maybeEmpty "user" user
     ]
 
 parseFromEitherTextOrArrayText (Left x) key = fromString key .= x
@@ -127,9 +115,22 @@ instance FromJSON Request where
   parseJSON invalid = typeMismatch "Request" invalid
 
 
+-- | Parse 'Either' 'Text' or 'Array' 'Text'
+--
+-- This function is used to parse fields that can be represented as a single string
+-- or an array of strings, such as the 'prompt' and 'stop' fields in the 'Request' data type.
 parseEitherTextOrArrayText :: Value -> String -> Parser (Either Text [Text])
+-- | If the value is an 'Array', parse the array as a list of 'Text' values
 parseEitherTextOrArrayText (Array arr) _ = do
   list <- parseJSON (Array arr)
   return $ Right list
+-- | If the value is a 'String', return the 'String' as a 'Left' 'Text' value
 parseEitherTextOrArrayText (String s) _ = return $ Left s
+-- | If the value is not a 'String' or an 'Array', throw a 'typeMismatch' error
 parseEitherTextOrArrayText invalid key = typeMismatch key invalid
+
+-- | Create a 'KeyValue' pair from a 'Maybe' value, using 'mempty' if the value is 'Nothing'
+--
+-- This function is used to create 'KeyValue' pairs for optional fields in the 'Request' data type.
+maybeEmpty :: (Monoid b, KeyValue b, ToJSON v) => String -> Maybe v -> b
+maybeEmpty key = maybe mempty (\x -> fromString key .= x)
