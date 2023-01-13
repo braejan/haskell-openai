@@ -17,13 +17,15 @@ name:               openai-api
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
-synopsis:           OpenAI API Reference implementation.
+synopsis:
+    Principal clients implementation to connect with OpenAI API.
 
 -- A longer description of the package.
 -- description:
 
 -- URL for the project homepage or repository.
-homepage:           https://github.com/braejan/haskell-openai
+homepage:
+    https://github.com/braejan/haskell-openai/tree/main/openai-api
 
 -- A URL where users can report bugs.
 -- bug-reports:
@@ -49,7 +51,8 @@ extra-source-files: CHANGELOG.md
 
 library
     -- Modules exported by the library.
-    exposed-modules:  MyLib
+    exposed-modules:
+        OpenAI.API.V1.Completion.Client
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -58,7 +61,13 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.14.3.0
+    build-depends:
+        base ^>=4.14.3.0,
+        text ^>=1.2.4.1,
+        openai-types,
+        aeson ^>=2.1.1.0,
+        bytestring ^>=0.10.12.0,
+        wreq,
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -77,7 +86,7 @@ test-suite openai-api-test
     hs-source-dirs:   test
 
     -- The entrypoint to the test suite.
-    main-is:          MyLibTest.hs
+    main-is:          Main.hs
 
     -- Test dependencies.
     build-depends:    base ^>=4.14.3.0

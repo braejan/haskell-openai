@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings #-}
 module OpenAI.API.V1.Completion.Response where
 
 import Data.Text (Text, pack)
@@ -8,7 +9,6 @@ import Data.Aeson (FromJSON (parseJSON), Options (fieldLabelModifier), genericPa
 import Data.Aeson.Types (ToJSON(toJSON), typeMismatch)
 import OpenAI.API.V1.Completion.Choice
 import OpenAI.API.V1.Completion.Usage
-import Data.Aeson.Key (fromString)
 -- | Data type representing a response from the OpenAI API
 data Response = Response
   { id :: Text
@@ -27,21 +27,21 @@ data Response = Response
 
 instance ToJSON Response where
   toEncoding Response {..} = pairs $ mconcat
-    [ fromString "id" .= id
-    , fromString "object" .= object
-    , fromString "created" .= created
-    , fromString "model" .= model
-    , fromString "choices" .= choices
-    , fromString "usage" .= usage
+    [ "id" .= id
+    , "object" .= object
+    , "created" .= created
+    , "model" .= model
+    , "choices" .= choices
+    , "usage" .= usage
     ]
 
 instance FromJSON Response where
   parseJSON (Object o) = do
-    id <- o .: fromString "id"
-    object <- o .: fromString "object"
-    created <- o .: fromString "created"
-    model <- o .: fromString "model"
-    choices <- o .: fromString "choices"
-    usage <- o .: fromString "usage"
+    id <- o .: "id"
+    object <- o .: "object"
+    created <- o .: "created"
+    model <- o .: "model"
+    choices <- o .: "choices"
+    usage <- o .: "usage"
     return $ Response{..}
   parseJSON invalid = typeMismatch "Response" invalid
