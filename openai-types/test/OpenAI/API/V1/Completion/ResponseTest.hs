@@ -11,9 +11,9 @@ import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
 import OpenAI.API.V1.Completion.ChoiceTest(createDefaultChoice, createEmptyChoice)
-import OpenAI.API.V1.Completion.UsageTest(createDefaultUsage, createEmptyUsage)
+import OpenAI.API.V1.Common.UsageTest(createDefaultUsage, createEmptyUsage)
 import OpenAI.API.V1.Completion.Choice (Choice)
-import OpenAI.API.V1.Completion.Usage (Usage)
+import OpenAI.API.V1.Common.Usage (Usage)
 
 jsonString :: String
 jsonString = "{\"id\":\"cmpl-GERzeJQ4lvqPk8SkZu4XMIuR\",\"object\":\"text_completion\",\"created\":1586839808,\"model\":\"text-davinci:003\",\"choices\":[{\"text\":\"This is indeed a test\",\"index\":0,\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":7,\"total_tokens\":12}}"

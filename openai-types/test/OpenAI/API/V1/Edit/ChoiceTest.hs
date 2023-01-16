@@ -1,4 +1,4 @@
-module OpenAI.API.V1.Completion.ChoiceTest where
+module OpenAI.API.V1.Edit.ChoiceTest where
 
 import Data.Aeson
 import Data.ByteString.Lazy (ByteString)
@@ -6,27 +6,23 @@ import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import OpenAI.API.V1.Completion.Choice(Choice(..))
+import OpenAI.API.V1.Edit.Choice(Choice(..))
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
 
 
 jsonString :: String
-jsonString = "{\"text\":\"This is indeed a test\",\"index\":0,\"finish_reason\":\"length\"}"
-
-jsonStringAllFields :: String
-jsonStringAllFields = "{\"text\":\"This is indeed a test\",\"index\":0,\"logprobs\":[0.0,1.0,2.0],\"finish_reason\":\"length\"}"
+jsonString = "{\"text\":\"This is indeed a test\",\"index\":0}"
 
 -- Test suite definition
 allChoiceTest :: TestTree
 allChoiceTest =
-  testGroup "Test suite for Module Completion openai-types: Choice"
+  testGroup "Test suite for Module Edit openai-types: Choice"
     [ testSerializationAnDeserialization,
       testStringSerialization,
       testEmptyStringSerialization,
-      testDeSerialization,
-      testDeSerializationLogprobs
+      testDeSerialization
     ]
 
 -- Test case 1:
@@ -62,28 +58,9 @@ testDeSerialization = testCase "Deserialization of a default Choice test to Stri
   let actual = encode choice
   assertEqual "4=>Parsed value should match expected value" expected actual
 
--- Test case 5:
-testDeSerializationLogprobs :: TestTree
-testDeSerializationLogprobs = testCase "Deserialization of a default Choice test to String." $ do
-  let expected = BS.pack jsonStringAllFields
-  let choice = createDefaultChoice {logprobs = Just [0.0,1.0,2.0]}
-  let actual = encode choice
-  assertEqual "5=>Parsed value should match expected value" expected actual
-
 -- | Create a new 'Choice' value with default test values
 createDefaultChoice = Choice
   {
   text = pack "This is indeed a test",
-  index = 0,
-  logprobs = Nothing,
-  finishReason = pack "length"
-  }
-
--- | Create a new 'Choice' value with default test values
-createEmptyChoice :: Choice
-createEmptyChoice = Choice
-  { text = pack ""
-  , index = 0
-  , logprobs = Nothing
-  , finishReason = pack ""
+  index = 0
   }

@@ -1,4 +1,4 @@
-module OpenAI.API.V1.Completion.UsageTest where
+module OpenAI.API.V1.Common.UsageTest where
 
 import Data.Aeson
 import Data.ByteString.Lazy (ByteString)
@@ -6,7 +6,7 @@ import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import OpenAI.API.V1.Completion.Usage(Usage(..))
+import OpenAI.API.V1.Common.Usage(Usage(..))
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)

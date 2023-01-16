@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
-module OpenAI.API.V1.Completion.Usage where
+module OpenAI.API.V1.Common.Usage where
 
 import Data.Text (Text, pack)
 import GHC.Generics (Generic)
@@ -39,3 +39,10 @@ instance FromJSON Usage where
     totalTokens <- o .: "total_tokens"
     return $ Usage {..}
   parseJSON invalid = typeMismatch "Usage" invalid
+
+createEmptyUsage :: Usage
+createEmptyUsage = Usage {
+  promptTokens = 0,
+  completionTokens = 0,
+  totalTokens = 0
+}
