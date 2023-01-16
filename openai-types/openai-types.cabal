@@ -55,8 +55,9 @@ library
         OpenAI.API.V1.Common.Usage
         OpenAI.API.V1.Completion.Choice
         OpenAI.API.V1.Configuration.Configuration
-        OpenAI.API.V1.Edit.Request
         OpenAI.API.V1.Edit.Choice
+        OpenAI.API.V1.Edit.Request
+        OpenAI.API.V1.Edit.Response
         OpenAI.API.V1.Completion.Request
         OpenAI.API.V1.Completion.Response     
 
@@ -97,8 +98,10 @@ test-suite openai-types-test
         OpenAI.API.V1.Completion.ChoiceTest
         OpenAI.API.V1.Common.UsageTest
         OpenAI.API.V1.Completion.ResponseTest
-        OpenAI.API.V1.Edit.RequestTest
         OpenAI.API.V1.Edit.ChoiceTest
+        OpenAI.API.V1.Edit.ResponseTest
+        OpenAI.API.V1.Edit.RequestTest
+        
     -- Test dependencies.
     build-depends:
         aeson,

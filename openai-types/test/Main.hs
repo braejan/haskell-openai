@@ -5,6 +5,7 @@ import OpenAI.API.V1.Edit.RequestTest (allRequestTest)
 import OpenAI.API.V1.Completion.ChoiceTest (allChoiceTest)
 import OpenAI.API.V1.Common.UsageTest (allUsageTest)
 import OpenAI.API.V1.Completion.ResponseTest (allResponseTest)
+import OpenAI.API.V1.Edit.ResponseTest (allResponseTest)
 import qualified OpenAI.API.V1.Edit.ChoiceTest
 
 -- Test suite definition
@@ -15,7 +16,8 @@ tests =
      ,OpenAI.API.V1.Completion.ChoiceTest.allChoiceTest
      ,OpenAI.API.V1.Edit.ChoiceTest.allChoiceTest
      ,allUsageTest
-     ,allResponseTest
+     ,OpenAI.API.V1.Completion.ResponseTest.allResponseTest
+     ,OpenAI.API.V1.Edit.ResponseTest.allResponseTest
      ,OpenAI.API.V1.Edit.RequestTest.allRequestTest
     ]
 
