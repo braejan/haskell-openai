@@ -55,6 +55,7 @@ library
         OpenAI.API.V1.Completion.Client
         OpenAI.API.V1.Common.Const
         OpenAI.API.V1.Common.Configuration
+        OpenAI.API.V1.Edit.Client
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -71,6 +72,7 @@ library
         bytestring ^>=0.10.12.0,
         wreq ^>=0.5.3.3,
         lens ^>=5.2,
+        mtl,
 
     -- Directories containing source files.
     hs-source-dirs:   src
