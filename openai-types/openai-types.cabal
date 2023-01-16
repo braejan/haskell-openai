@@ -51,11 +51,15 @@ extra-source-files: CHANGELOG.md
 library
     -- Modules exported by the library.
     exposed-modules:
-        OpenAI.API.V1.Completion.Request
-        OpenAI.API.V1.Completion.Response
+        OpenAI.API.V1.Common.Helper
+        OpenAI.API.V1.Common.Usage
         OpenAI.API.V1.Completion.Choice
-        OpenAI.API.V1.Completion.Usage
         OpenAI.API.V1.Configuration.Configuration
+        OpenAI.API.V1.Edit.Choice
+        OpenAI.API.V1.Edit.Request
+        OpenAI.API.V1.Edit.Response
+        OpenAI.API.V1.Completion.Request
+        OpenAI.API.V1.Completion.Response     
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -89,11 +93,15 @@ test-suite openai-types-test
     -- The entrypoint to the test suite.
     main-is:          Main.hs
 
-    other-modules: 
+    other-modules:        
         OpenAI.API.V1.Completion.RequestTest
         OpenAI.API.V1.Completion.ChoiceTest
-        OpenAI.API.V1.Completion.UsageTest
+        OpenAI.API.V1.Common.UsageTest
         OpenAI.API.V1.Completion.ResponseTest
+        OpenAI.API.V1.Edit.ChoiceTest
+        OpenAI.API.V1.Edit.ResponseTest
+        OpenAI.API.V1.Edit.RequestTest
+        
     -- Test dependencies.
     build-depends:
         aeson,

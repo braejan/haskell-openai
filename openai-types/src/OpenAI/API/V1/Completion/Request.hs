@@ -23,6 +23,7 @@ import Data.Aeson.Types
       ToJSON(toJSON, toEncoding),
       typeMismatch,
       Parser )
+import OpenAI.API.V1.Common.Helper (maybeEmpty)
 
 -- | Data type representing a request to the OpenAI API
 data Request = Request
@@ -128,12 +129,6 @@ parseEitherTextOrArrayText (Array arr) _ = do
 parseEitherTextOrArrayText (String s) _ = return $ Left s
 -- | If the value is not a 'String' or an 'Array', throw a 'typeMismatch' error
 parseEitherTextOrArrayText invalid key = typeMismatch key invalid
-
--- | Create a 'KeyValue' pair from a 'Maybe' value, using 'mempty' if the value is 'Nothing'
---
--- This function is used to create 'KeyValue' pairs for optional fields in the 'Request' data type.
-maybeEmpty :: (Monoid b, KeyValue b, ToJSON v) => Key -> Maybe v -> b
-maybeEmpty key = maybe mempty (key .=)
 
 
 createEmptyRequest :: Request

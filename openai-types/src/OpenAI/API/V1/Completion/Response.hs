@@ -8,7 +8,7 @@ import GHC.Generics (Generic)
 import Data.Aeson (FromJSON (parseJSON), Options (fieldLabelModifier), genericParseJSON, defaultOptions, camelTo2, ToJSON (toEncoding), genericToJSON, pairs, KeyValue ((.=)), Value (Object), (.:))
 import Data.Aeson.Types (ToJSON(toJSON), typeMismatch)
 import OpenAI.API.V1.Completion.Choice
-import OpenAI.API.V1.Completion.Usage
+import OpenAI.API.V1.Common.Usage
 -- | Data type representing a response from the OpenAI API
 data Response = Response
   { id :: Text

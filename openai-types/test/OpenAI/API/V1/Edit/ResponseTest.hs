@@ -1,22 +1,23 @@
-module OpenAI.API.V1.Completion.ResponseTest where
+{-# LANGUAGE OverloadedStrings #-}
+module OpenAI.API.V1.Edit.ResponseTest where
 
-import Data.Aeson
+import Data.Aeson hiding (object)
 import Data.ByteString.Lazy (ByteString)
 import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import OpenAI.API.V1.Completion.Response(Response(..))
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
-import OpenAI.API.V1.Completion.ChoiceTest(createDefaultChoice, createEmptyChoice)
-import OpenAI.API.V1.Common.UsageTest(createDefaultUsage, createEmptyUsage)
-import OpenAI.API.V1.Completion.Choice (Choice)
-import OpenAI.API.V1.Common.Usage (Usage)
+import OpenAI.API.V1.Edit.ChoiceTest(createDefaultChoice)
+import OpenAI.API.V1.Common.UsageTest(createDefaultUsage)
+import OpenAI.API.V1.Edit.Choice (Choice (..))
+import OpenAI.API.V1.Edit.Response (Response (..))
+import OpenAI.API.V1.Common.Usage (Usage (..))
 
 jsonString :: String
-jsonString = "{\"id\":\"cmpl-GERzeJQ4lvqPk8SkZu4XMIuR\",\"object\":\"text_completion\",\"created\":1586839808,\"model\":\"text-davinci:003\",\"choices\":[{\"text\":\"This is indeed a test\",\"index\":0,\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":7,\"total_tokens\":12}}"
+jsonString = "{\"object\":\"text_completion\",\"created\":1586839808,\"choices\":[{\"text\":\"This is indeed a test\",\"index\":0}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":7,\"total_tokens\":12}}"
 
 -- Test suite definition
 allResponseTest :: TestTree
@@ -63,10 +64,18 @@ testDeSerialization = testCase "Deserialization of a default Response test to St
 
 
 createDefaultResponse :: Response
-createDefaultResponse = 
-  Response (pack "cmpl-GERzeJQ4lvqPk8SkZu4XMIuR") (pack "text_completion") 1586839808 (pack "text-davinci:003") [createDefaultChoice] createDefaultUsage
-
-
-createEmptyResponse :: Response
-createEmptyResponse = 
-  Response (pack "") (pack "") 0 (pack "") [createEmptyChoice] createEmptyUsage
+createDefaultResponse = Response {
+  object = "text_completion",
+  created = 1586839808,
+  choices = [
+    Choice {
+      text = "This is indeed a test",
+      index = 0
+    }
+  ],
+  usage  = Usage {
+    promptTokens = 5,
+    completionTokens = 7,
+    totalTokens = 12
+  }
+}
