@@ -1,31 +1,21 @@
+
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
-import Data.Text (Text)
-import qualified Data.Text as T
-import OpenAI.API.V1.Completion.Response ( Response (..) )
-import System.Environment (lookupEnv)
-import OpenAI.API.V1.Configuration.Configuration (Configuration(..))
-import OpenAI.API.V1.Completion.Request (createEmptyRequest, Request (..))
 import qualified OpenAI.API.V1.Completion.Client as Client
-import qualified OpenAI.API.V1.Completion.Request as Request
-import Text.Read (readMaybe)
-import Data.Maybe (fromMaybe)
-import OpenAI.API.V1.Common.Configuration (fromEnvVariables)
-import Control.Monad (forM_)
-import OpenAI.API.V1.Completion.Choice (Choice(..))
-import Control.Monad.IO.Class (MonadIO(liftIO))
-import OpenAI.API.V1.Completion.Client (fastCompletion)
-import Data.Aeson (ToJSON(toJSON), decode, encode)
-import OpenAI.API.V1.Edit.Client (fastTextEdit)
+import OpenAI.API.V1.Completion.Request (Request(..), createEmptyRequest)
 
 main :: IO ()
 main = do
-    callTextEdit
+    --Calling using a custom configuration:
+    let request = createEmptyRequest {
+        model = "your-favorite-model",
+        prompt = Just $ Left "my custom prompt"
+    --  to use an array you should use:
+    --  prompt = Just $ Rigth ["custom prompt 0", "custom prompt n"]
+    }
+    call <- Client.fastCompletion request
+    case call of
+      Left error -> print ("call with error: " <> error)
+      Right response -> print response 
 
-
-
-callTextEdit :: IO()
-callTextEdit = do
-    result <- fastTextEdit "Fox this text." "Correct text"
-    print result
     
