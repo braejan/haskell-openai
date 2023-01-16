@@ -55,6 +55,7 @@ library
         OpenAI.API.V1.Completion.Response
         OpenAI.API.V1.Completion.Choice
         OpenAI.API.V1.Completion.Usage
+        OpenAI.API.V1.Configuration.Configuration
 
     -- Modules included in this library but not exported.
     -- other-modules:

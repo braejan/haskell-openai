@@ -12,7 +12,7 @@ tests =
     [ allRequestTest
      ,allChoiceTest
      ,allUsageTest
-     --,allResponseTest
+     ,allResponseTest
     ]
 
 main :: IO ()

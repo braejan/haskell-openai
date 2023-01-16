@@ -1,14 +1,14 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE OverloadedStrings #-}
 module OpenAI.API.V1.Completion.Request where
 
-import Data.Text (Text, pack, unpack)
+import Data.Text (Text)
 import GHC.Generics (Generic)
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Maybe (fromMaybe)
-import Data.Aeson (ToJSON (toEncoding), FromJSON (parseJSON), toJSON, object, KeyValue ((.=)), Value (Null, Object, Array), pairs, withObject, (.:), (.:?))
-import Data.Aeson.Key(fromString)
+import Data.Aeson (ToJSON (toEncoding), FromJSON (parseJSON), toJSON, object, KeyValue ((.=)), Value (Null, Object, Array), pairs, withObject, (.:), (.:?), Key)
 import Data.Aeson.Types
     ( pairs,
       (.:),
@@ -60,76 +60,98 @@ data Request = Request
   -- ^ Optional.
   } deriving (Show, Eq, Generic)
 
--- instance ToJSON Choice where
---   toJSON = genericToJSON options { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_') }
---     where options = defaultOptions { omitNothingFields = True }
---   toEncoding Choice {..} = pairs $ mconcat
---     [ fromString "text" .= text
---     , fromString "index" .= index
---     , maybe mempty (\ x -> fromString "logprobs" .= x) logprobs
---     , fromString "finish_reason" .= finishReason
---     ]
-
 instance ToJSON Request where
-  toJSON = genericToJSON options { fieldLabelModifier = camelTo2 '_' . dropWhile (== '_') }
-    where options = defaultOptions { omitNothingFields = True }
   toEncoding Request {..} = pairs $ mconcat
-    [ fromString "model" .= model
+    [ "model" .= model
     , maybe mempty parseFromEitherTextOrArrayText prompt "prompt"
-    , maybe mempty (\x -> fromString "suffix" .= x) suffix
-    , maybe mempty (\x -> fromString "max_tokens" .= x) maxTokens
-    , maybe mempty (\x -> fromString "temperature" .= x) temperature
-    , maybe mempty (\x -> fromString "top_p" .= x) topP
-    , maybe mempty (\x -> fromString "n" .= x) n
-    , maybe mempty (\x -> fromString "stream" .= x) stream
-    , maybe mempty (\x -> fromString "logprobs" .= x) logprobs
-    , maybe mempty (\x -> fromString "echo" .= x) echo
+    , maybeEmpty "suffix" suffix
+    , maybeEmpty "max_tokens" maxTokens
+    , maybeEmpty "temperature" temperature
+    , maybeEmpty "top_p" topP
+    , maybeEmpty "n" n
+    , maybeEmpty "stream" stream
+    , maybeEmpty "logprobs" logprobs
+    , maybeEmpty "echo" echo
     , maybe mempty parseFromEitherTextOrArrayText stop "stop"
-    , maybe mempty (\x -> fromString "presence_penalty" .= x) presencePenalty
-    , maybe mempty (\x -> fromString "frequency_penalty" .= x) frequencyPenalty
-    , maybe mempty (\x -> fromString "best_of" .= x) bestOf
-    , maybe mempty (\x -> fromString "logit_bias" .= x) logitBias
-    , maybe mempty (\x -> fromString "user" .= x) user
+    , maybeEmpty "presence_penalty" presencePenalty
+    , maybeEmpty "frequency_penalty" frequencyPenalty
+    , maybeEmpty "best_of" bestOf
+    , maybeEmpty "logit_bias" logitBias
+    , maybeEmpty "user" user
     ]
 
-parseFromEitherTextOrArrayText (Left x) key = fromString key .= x
-parseFromEitherTextOrArrayText (Right xs) key = fromString key .= xs
+parseFromEitherTextOrArrayText (Left x) key = key .= x
+parseFromEitherTextOrArrayText (Right xs) key = key .= xs
 
 instance FromJSON Request where
   parseJSON (Object o) = do
-    model <- o .: fromString "model"
+    model <- o .: "model"
     prompt <- do
-      promptObject <- o .: fromString "prompt"
+      promptObject <- o .: "prompt"
       choice <- parseEitherTextOrArrayText promptObject "prompt"
       case choice of
         Left choiceText -> return $ Just $ Left choiceText
         Right choiceArray -> return $ Just $ Right choiceArray
-    suffix <- o .:? fromString "suffix"
-    maxTokens <- o .:? fromString "max_tokens"
-    temperature <- o .:? fromString "temperature"
-    topP <- o .:? fromString "top_p"
-    n <- o .:? fromString "n"
-    stream <- o .:? fromString "stream"
-    logprobs <- o .:? fromString "logprobs"
-    echo <- o .:? fromString "echo"
+    suffix <- o .:? "suffix"
+    maxTokens <- o .:? "max_tokens"
+    temperature <- o .:? "temperature"
+    topP <- o .:? "top_p"
+    n <- o .:? "n"
+    stream <- o .:? "stream"
+    logprobs <- o .:? "logprobs"
+    echo <- o .:? "echo"
     stop <- do
-      promptObject <- o .: fromString "stop"
+      promptObject <- o .: "stop"
       choice <- parseEitherTextOrArrayText promptObject "stop"
       case choice of
         Left choiceText -> return $ Just $ Left choiceText
         Right choiceArray -> return $ Just $ Right choiceArray
-    presencePenalty <- o .:? fromString "presence_penalty"
-    frequencyPenalty <- o .:? fromString "frequency_penalty"
-    bestOf <- o .:? fromString "best_of"
-    logitBias <- o .:? fromString "logit_bias"
-    user <- o .:? fromString "user"
+    presencePenalty <- o .:? "presence_penalty"
+    frequencyPenalty <- o .:? "frequency_penalty"
+    bestOf <- o .:? "best_of"
+    logitBias <- o .:? "logit_bias"
+    user <- o .:? "user"
     return $ Request {..}
   parseJSON invalid = typeMismatch "Request" invalid
 
 
+-- | Parse 'Either' 'Text' or 'Array' 'Text'
+--
+-- This function is used to parse fields that can be represented as a single string
+-- or an array of strings, such as the 'prompt' and 'stop' fields in the 'Request' data type.
 parseEitherTextOrArrayText :: Value -> String -> Parser (Either Text [Text])
+-- | If the value is an 'Array', parse the array as a list of 'Text' values
 parseEitherTextOrArrayText (Array arr) _ = do
   list <- parseJSON (Array arr)
   return $ Right list
+-- | If the value is a 'String', return the 'String' as a 'Left' 'Text' value
 parseEitherTextOrArrayText (String s) _ = return $ Left s
+-- | If the value is not a 'String' or an 'Array', throw a 'typeMismatch' error
 parseEitherTextOrArrayText invalid key = typeMismatch key invalid
+
+-- | Create a 'KeyValue' pair from a 'Maybe' value, using 'mempty' if the value is 'Nothing'
+--
+-- This function is used to create 'KeyValue' pairs for optional fields in the 'Request' data type.
+maybeEmpty :: (Monoid b, KeyValue b, ToJSON v) => Key -> Maybe v -> b
+maybeEmpty key = maybe mempty (key .=)
+
+
+createEmptyRequest :: Request
+createEmptyRequest = Request {
+    model = "",
+    prompt = Nothing,
+    suffix = Nothing,
+    maxTokens = Nothing,
+    temperature = Nothing,
+    topP = Nothing,
+    n = Nothing,
+    stream = Nothing,
+    logprobs = Nothing,
+    echo = Nothing,
+    stop = Nothing,
+    presencePenalty = Nothing,
+    frequencyPenalty = Nothing,
+    bestOf = Nothing,
+    logitBias = Nothing,
+    user = Nothing
+}
