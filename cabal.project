@@ -1,7 +1,11 @@
 packages:
   openai-types
   openai-api
+  openai-api-examples
 
 package openai-api
   dependencies:
     openai-types
+package openai-api-examples
+  dependencies:
+    openai-api

@@ -134,3 +134,24 @@ parseEitherTextOrArrayText invalid key = typeMismatch key invalid
 -- This function is used to create 'KeyValue' pairs for optional fields in the 'Request' data type.
 maybeEmpty :: (Monoid b, KeyValue b, ToJSON v) => Key -> Maybe v -> b
 maybeEmpty key = maybe mempty (key .=)
+
+
+createEmptyRequest :: Request
+createEmptyRequest = Request {
+    model = "",
+    prompt = Nothing,
+    suffix = Nothing,
+    maxTokens = Nothing,
+    temperature = Nothing,
+    topP = Nothing,
+    n = Nothing,
+    stream = Nothing,
+    logprobs = Nothing,
+    echo = Nothing,
+    stop = Nothing,
+    presencePenalty = Nothing,
+    frequencyPenalty = Nothing,
+    bestOf = Nothing,
+    logitBias = Nothing,
+    user = Nothing
+}
