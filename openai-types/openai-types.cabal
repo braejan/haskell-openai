@@ -69,10 +69,10 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.14.3.0,
-        aeson ^>=2.1.1.0,
-        containers ^>=0.6.5.1,
-        text ^>=1.2.4.1,
+        base ^>=4.16.4.0,
+        aeson,
+        containers,
+        text,
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -105,11 +105,11 @@ test-suite openai-types-test
     -- Test dependencies.
     build-depends:
         aeson,
-        base ^>=4.14.3.0,
+        base,
         text,
         bytestring,
         hspec,
         tasty,
         tasty-hunit,
         openai-types,
-        containers ^>=0.6.5.1,
+        containers,

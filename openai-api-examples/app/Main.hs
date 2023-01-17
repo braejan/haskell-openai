@@ -1,21 +1,26 @@
-
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
-import qualified OpenAI.API.V1.Completion.Client as Client
-import OpenAI.API.V1.Completion.Request (Request(..), createEmptyRequest)
-
+import OpenAI.API.V1.Completion.Client (createCompletion)
+import OpenAI.API.V1.Completion.Request (completionRequest, Request (..))
+import qualified Data.Text as T
 main :: IO ()
 main = do
-    --Calling using a custom configuration:
-    let request = createEmptyRequest {
-        model = "your-favorite-model",
-        prompt = Just $ Left "my custom prompt"
-    --  to use an array you should use:
-    --  prompt = Just $ Rigth ["custom prompt 0", "custom prompt n"]
+    result <- createCompletion completionRequest{
+        model = "text-davinci-003",
+        prompt = Just $ Left "Say this is a test",
+        maxTokens = Just 256
     }
-    call <- Client.fastCompletion request
-    case call of
-      Left error -> print ("call with error: " <> error)
-      Right response -> print response 
+    case result of
+        Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
+        Right response -> putStrLn $ "🫡 Response: \n" <> show response
 
-    
+completionSample :: IO()
+completionSample = do
+    result <- createCompletion completionRequest{
+        model = "text-davinci-003",
+        prompt = Just $ Left "Say this is a test",
+        maxTokens = Just 256
+    }
+    case result of
+        Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
+        Right response -> putStrLn $ "🫡 Response: \n" <> show response

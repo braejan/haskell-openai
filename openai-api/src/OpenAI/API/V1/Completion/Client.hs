@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module OpenAI.API.V1.Completion.Client where
 import Data.Text (Text)
-import OpenAI.API.V1.Configuration.Configuration ( Configuration (..) )
+import OpenAI.API.V1.Configuration.Configuration ( Configuration (..), createEmptyConfiguration )
 import OpenAI.API.V1.Completion.Request ( Request (..) )
 import OpenAI.API.V1.Completion.Response ( Response(Response, choices))
 import qualified OpenAI.API.V1.Common.Const as Const
@@ -12,6 +12,8 @@ import qualified Data.Text.Encoding as TE
 import qualified Data.Text as T
 import OpenAI.API.V1.Common.Configuration (fromEnvVariables, getHeaders)
 import Data.Aeson (encode)
+import Control.Monad.IO.Class
+import Control.Monad.Except (runExceptT)
 -- | OpenAI API description
 about :: Text
 about = "Given a prompt, the model will return one or more predicted \
@@ -39,8 +41,8 @@ completion config request = do
         message = rsp ^. responseStatus . statusMessage
         finalError = T.pack (show status <> ": " <> show message)
 
--- | fastCompletion is a method that takes the configuration from ENV variables and create send a request.
-fastCompletion :: Request -> IO(Either Text Response)
-fastCompletion request = do
+-- | createCompletion is a method that takes the configuration from ENV variables and create send a request.
+createCompletion :: Request -> IO(Either Text Response)
+createCompletion request = do
   configuration <- fromEnvVariables
   completion configuration request

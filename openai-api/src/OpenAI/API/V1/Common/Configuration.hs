@@ -12,15 +12,15 @@ import Control.Monad.Reader (ReaderT(runReaderT))
 
 fromEnvVariables :: IO Configuration
 fromEnvVariables = do
-    apiKeyValue <- lookupEnv "OPEN_AI_API_KEY"
-    orgValue <- lookupEnv "OPEN_AI_API_ORGANIZATION"
+    apiKeyValue <- lookupEnv "OPENAI_API_KEY"
+    orgValue <- lookupEnv "OPENAI_ORGANIZATION"
     pure $ createEmptyConfiguration {
         apiKey = T.pack $ fromMaybe "" apiKeyValue,
         organization = T.pack $ fromMaybe "" orgValue
     }
 
-createConfiguration :: Text -> Text -> Configuration
-createConfiguration apiKeyValue orgValue = createEmptyConfiguration {
+fromValues :: Text -> Text -> Configuration
+fromValues apiKeyValue orgValue = createEmptyConfiguration {
     apiKey = apiKeyValue,
     organization = orgValue
 }

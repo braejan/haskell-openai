@@ -23,8 +23,8 @@ url :: String
 url = T.unpack $ Const.baseURL <> "edits"
 
 
-edit :: Configuration -> Request -> IO(Either Text Response)
-edit config request = do
+editWithConf :: Configuration -> Request -> IO(Either Text Response)
+editWithConf config request = do
   rsp <- asJSON =<< postWith (getHeaders config) url (encode request)
   let status = rsp ^. responseStatus . statusCode
   let response = rsp ^. responseBody
@@ -34,22 +34,8 @@ edit config request = do
         message = rsp ^. responseStatus . statusMessage
         finalError = T.pack (show status <> ": " <> show message)
 
-fastTextEdit :: Text -> Text -> IO(Either Text Response)
-fastTextEdit input instruction = do
-        configuration <- fromEnvVariables
-        let request = createEmptyRequest {
-                model = "text-davinci-edit-001",
-                input = Just input,
-                instruction = instruction
-        }
-        edit configuration request
 
-fastCodeEdit :: Text -> Text -> IO(Either Text Response)
-fastCodeEdit input instruction = do
-        configuration <- fromEnvVariables
-        let request = createEmptyRequest {
-                model = "code-davinci-edit-001",
-                input = Just input,
-                instruction = instruction
-        }
-        edit configuration request
+edit :: Request -> IO(Either Text Response)
+edit request = do
+  configuration <- fromEnvVariables
+  editWithConf configuration request
