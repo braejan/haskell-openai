@@ -38,4 +38,5 @@ main = do
         Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
         Right response -> putStrLn $ "🫡 Response: \n" <> show response
 ```
-[![https://lift.sonatype.com/api/badge/github.com/braejan/haskell-openai]]
+
+![Sonatype Lift](https://lift.sonatype.com/api/badge/github.com/braejan/haskell-openai)
