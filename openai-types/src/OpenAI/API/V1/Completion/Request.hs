@@ -131,8 +131,8 @@ parseEitherTextOrArrayText (String s) _ = return $ Left s
 parseEitherTextOrArrayText invalid key = typeMismatch key invalid
 
 
-createEmptyRequest :: Request
-createEmptyRequest = Request {
+completionRequest :: Request
+completionRequest = Request {
     model = "",
     prompt = Nothing,
     suffix = Nothing,

@@ -41,8 +41,8 @@ completion config request = do
         message = rsp ^. responseStatus . statusMessage
         finalError = T.pack (show status <> ": " <> show message)
 
--- | fastCompletion is a method that takes the configuration from ENV variables and create send a request.
-create :: Request -> IO(Either Text Response)
-create request = do
+-- | createCompletion is a method that takes the configuration from ENV variables and create send a request.
+createCompletion :: Request -> IO(Either Text Response)
+createCompletion request = do
   configuration <- fromEnvVariables
   completion configuration request
