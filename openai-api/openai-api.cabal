@@ -55,7 +55,10 @@ library
         OpenAI.API.V1.Completion.Client
         OpenAI.API.V1.Common.Const
         OpenAI.API.V1.Common.Configuration
+        OpenAI.API.V1.Util.EditUtil
         OpenAI.API.V1.Edit.Client
+        OpenAI.API.V1.Edit.Code
+        OpenAI.API.V1.Edit.Text
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -65,13 +68,13 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.14.3.0,
-        text ^>=1.2.4.1,
+        base ^>=4.16.4.0,
+        text,
         openai-types,
-        aeson ^>=2.1.1.0,
-        bytestring ^>=0.10.12.0,
-        wreq ^>=0.5.3.3,
-        lens ^>=5.2,
+        aeson,
+        bytestring,
+        wreq,
+        lens,
         mtl,
 
     -- Directories containing source files.
@@ -94,4 +97,4 @@ test-suite openai-api-test
     main-is:          Main.hs
 
     -- Test dependencies.
-    build-depends:    base ^>=4.14.3.0
+    build-depends:    base ^>=4.16.4.0,
