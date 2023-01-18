@@ -54,12 +54,15 @@ library
         OpenAI.API.V1.Common.Helper
         OpenAI.API.V1.Common.Usage
         OpenAI.API.V1.Completion.Choice
+        OpenAI.API.V1.Completion.Request
+        OpenAI.API.V1.Completion.Response
         OpenAI.API.V1.Configuration.Configuration
         OpenAI.API.V1.Edit.Choice
         OpenAI.API.V1.Edit.Request
         OpenAI.API.V1.Edit.Response
-        OpenAI.API.V1.Completion.Request
-        OpenAI.API.V1.Completion.Response     
+        OpenAI.API.V1.Model.Model
+        OpenAI.API.V1.Model.Permission
+        OpenAI.API.V1.Model.Response
 
     -- Modules included in this library but not exported.
     -- other-modules:

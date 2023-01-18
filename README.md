@@ -39,4 +39,4 @@ main = do
         Right response -> putStrLn $ "🫡 Response: \n" <> show response
 ```
 
-![Sonatype Lift](https://lift.sonatype.com/api/badge/github.com/braejan/haskell-openai)
+![](https://lift.sonatype.com/api/badge/github.com/braejan/haskell-openai)

@@ -4,7 +4,7 @@ import Data.Text (Text)
 import qualified OpenAI.API.V1.Common.Const as Const
 import qualified Data.Text as T
 import OpenAI.API.V1.Configuration.Configuration ( Configuration )
-import OpenAI.API.V1.Edit.Request ( Request (..), createEmptyRequest )
+import OpenAI.API.V1.Edit.Request ( Request (..))
 import OpenAI.API.V1.Edit.Response ( Response )
 import OpenAI.API.V1.Common.Configuration (getHeaders, fromEnvVariables)
 import Data.Aeson (encode)
@@ -22,10 +22,13 @@ about = "Given a prompt and an instruction, the model will return \
 url :: String
 url = T.unpack $ Const.baseURL <> "edits"
 
-
-editWithConf :: Configuration -> Request -> IO(Either Text Response)
-editWithConf config request = do
-  rsp <- asJSON =<< postWith (getHeaders config) url (encode request)
+-- | createEdit Creates a new edit for the provided input, instruction, and parameters
+createEdit :: Request -> IO(Either Text Response)
+createEdit request = do
+  configuration <- fromEnvVariables
+  let headers = getHeaders configuration
+  let requestBody = encode request
+  rsp <- asJSON =<< postWith headers url requestBody
   let status = rsp ^. responseStatus . statusCode
   let response = rsp ^. responseBody
   case status of
@@ -33,9 +36,3 @@ editWithConf config request = do
     _ -> pure $ Left finalError where
         message = rsp ^. responseStatus . statusMessage
         finalError = T.pack (show status <> ": " <> show message)
-
-
-edit :: Request -> IO(Either Text Response)
-edit request = do
-  configuration <- fromEnvVariables
-  editWithConf configuration request
