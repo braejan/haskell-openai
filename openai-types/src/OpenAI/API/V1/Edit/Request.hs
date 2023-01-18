@@ -31,8 +31,8 @@ data Request = Request {
 } deriving (Show, Eq, Generic)
 
 
-createEmptyRequest :: Request
-createEmptyRequest = Request {
+editRequest :: Request
+editRequest = Request {
     model = "",
     input = Nothing,
     instruction = "",
