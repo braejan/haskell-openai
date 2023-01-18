@@ -8,14 +8,17 @@ import OpenAI.API.V1.Edit.Client (createEdit)
 import OpenAI.API.V1.Edit.Request (editRequest, Request (input, instruction, model))
 import qualified OpenAI.API.V1.Completion.Request as CR
 import qualified OpenAI.API.V1.Edit.Request as ER
+import qualified OpenAI.API.V1.Image.Request as IR
+import OpenAI.API.V1.Image.Client (createImage)
+import OpenAI.API.V1.Image.Request (imageRequest, Request (..))
 main :: IO ()
-main = createEditSample
+main = createImageSample
 
 createCompletionSample :: IO()
 createCompletionSample = do
     result <- createCompletion completionRequest{
         CR.model = "text-davinci-003",
-        prompt = Just $ Left "Say this is a test",
+        CR.prompt = Just $ Left "Say this is a test",
         maxTokens = Just 256
     }
     case result of
@@ -49,6 +52,17 @@ createEditSample = do
                 \It gives its suggestion\
                 \This is a poem it made that rhymes",
         instruction = "Make this in the voice of GPT-3"
+    }
+    case result of
+        Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
+        Right response -> putStrLn $ "🫡 Response: \n" <> show response
+
+createImageSample :: IO()
+createImageSample = do
+    result <- createImage imageRequest {
+        IR.prompt = "A cute baby sea otter",
+        IR.n = Just 2,
+        IR.size = Just "1024x1024"
     }
     case result of
         Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
