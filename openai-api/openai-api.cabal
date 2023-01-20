@@ -56,8 +56,10 @@ library
         OpenAI.API.V1.Common.Const
         OpenAI.API.V1.Completion.Client
         OpenAI.API.V1.Edit.Client
+        OpenAI.API.V1.Image.Client
         OpenAI.API.V1.Model.Client
         OpenAI.API.V1.Util.EditUtil
+        OpenAI.API.V1.Util.FileUtil
 
     -- Modules included in this library but not exported.
     -- other-modules:
