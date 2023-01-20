@@ -14,7 +14,7 @@ import OpenAI.API.V1.Image.Client (createImage, createImageEdit)
 import OpenAI.API.V1.Image.Request (imageRequest, Request (..))
 import OpenAI.API.V1.Image.Edit.Request (imageEditRequest)
 main :: IO ()
-main = createImageEditSample
+main = createImageVariationSample
 
 createCompletionSample :: IO()
 createCompletionSample = do
@@ -74,9 +74,22 @@ createImageSample = do
 createImageEditSample :: IO()
 createImageEditSample = do
     result <- createImageEdit imageEditRequest {
-        IER.image = "otter.png",
-        IER.mask = Just "mask.png",
-        IER.prompt = "Remove the persons and replace it with Pandas",
+        IER.image = "test/assets/createImageEdit.png",
+        IER.mask = Nothing,
+        IER.prompt = "Rick and Morty getting out from a Portal. They are arriving to a 'Far Far Away' from Shrek world.",
+        IER.n = Just 3,
+        IER.size = Just "1024x1024"
+    }
+    case result of
+        Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
+        Right response -> putStrLn $ "🫡 Response: \n" <> show response
+
+createImageVariationSample :: IO()
+createImageVariationSample = do
+    result <- createImageEdit imageEditRequest {
+        IER.image = "test/assets/createImageVariation.png",
+        IER.mask = Nothing,
+        IER.prompt = "Rick and Morty getting out from a Portal. They are arriving to a 'Far Far Away' from Shrek world.",
         IER.n = Just 3,
         IER.size = Just "1024x1024"
     }
