@@ -1,5 +1,6 @@
 
 # :construction: Under Development :construction:
+
 <div align="center">
   <p>
   <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/braejan/haskell-openai?color=%2304D361">
@@ -10,6 +11,7 @@
   <img alt="GitHub" src="https://img.shields.io/github/license/braejan/haskell-openai?label=License">
   </p>
 </div>
+
 # Welcome to the Haskell OpenAI API library!
 
 UNOFFICIAL: This library provides a wrapper for the OpenAI API, making it easy to implement services exposed by the OpenAI API in your Haskell projects. With this library, you can perform basic query operations on the OpenAI API with just a few lines of code.
