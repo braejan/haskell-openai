@@ -9,10 +9,12 @@ import OpenAI.API.V1.Edit.Request (editRequest, Request (input, instruction, mod
 import qualified OpenAI.API.V1.Completion.Request as CR
 import qualified OpenAI.API.V1.Edit.Request as ER
 import qualified OpenAI.API.V1.Image.Request as IR
-import OpenAI.API.V1.Image.Client (createImage)
+import qualified OpenAI.API.V1.Image.Edit.Request as IER
+import OpenAI.API.V1.Image.Client (createImage, createImageEdit)
 import OpenAI.API.V1.Image.Request (imageRequest, Request (..))
+import OpenAI.API.V1.Image.Edit.Request (imageEditRequest)
 main :: IO ()
-main = createImageSample
+main = createImageEditSample
 
 createCompletionSample :: IO()
 createCompletionSample = do
@@ -46,12 +48,12 @@ createEditSample :: IO()
 createEditSample = do
     result <- createEdit editRequest {
         ER.model = "text-davinci-edit-001",
-        input = Just "GPT-3 is a very nice AI\
+        ER.input = Just "GPT-3 is a very nice AI\
                 \That's pretty good at writing replies\
                 \When it's asked a question\
                 \It gives its suggestion\
                 \This is a poem it made that rhymes",
-        instruction = "Make this in the voice of GPT-3"
+        ER.instruction = "Make this in the voice of GPT-3"
     }
     case result of
         Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
@@ -63,6 +65,20 @@ createImageSample = do
         IR.prompt = "A cute baby sea otter",
         IR.n = Just 2,
         IR.size = Just "1024x1024"
+    }
+    case result of
+        Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
+        Right response -> putStrLn $ "🫡 Response: \n" <> show response
+
+
+createImageEditSample :: IO()
+createImageEditSample = do
+    result <- createImageEdit imageEditRequest {
+        IER.image = "otter.png",
+        IER.mask = Just "mask.png",
+        IER.prompt = "Remove the persons and replace it with Pandas",
+        IER.n = Just 3,
+        IER.size = Just "1024x1024"
     }
     case result of
         Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)

@@ -29,12 +29,14 @@ imageResponse = Response {
 }
 
 instance ToJSON Response where
+    toEncoding :: Response -> Encoding
     toEncoding Response {..} = pairs $ mconcat
         [ "created" .= created
         , "data" .= reponseData
         ]
 
 instance FromJSON Response where
+    parseJSON :: Value -> Parser Response
     parseJSON (Object o) = do
         created <- o .: "created"
         reponseData <- o .: "data"

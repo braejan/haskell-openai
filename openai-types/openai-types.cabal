@@ -60,6 +60,7 @@ library
         OpenAI.API.V1.Edit.Choice
         OpenAI.API.V1.Edit.Request
         OpenAI.API.V1.Edit.Response
+        OpenAI.API.V1.Image.Edit.Request
         OpenAI.API.V1.Image.ImageData
         OpenAI.API.V1.Image.Request
         OpenAI.API.V1.Image.Response
@@ -79,6 +80,8 @@ library
         aeson,
         containers,
         text,
+        bytestring,
+        base64-bytestring,
 
     -- Directories containing source files.
     hs-source-dirs:   src
