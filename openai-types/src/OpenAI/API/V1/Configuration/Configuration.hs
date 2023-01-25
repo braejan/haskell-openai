@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module OpenAI.API.V1.Configuration.Configuration where
-import Data.Text
+import Data.Text ( Text )
 
 data Configuration = Configuration 
   { apiKey :: Text

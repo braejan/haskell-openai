@@ -2,10 +2,5 @@ packages:
   openai-types
   openai-api
   openai-api-examples
+  openai-labs
 
-package openai-api
-  dependencies:
-    openai-types
-package openai-api-examples
-  dependencies:
-    openai-api
