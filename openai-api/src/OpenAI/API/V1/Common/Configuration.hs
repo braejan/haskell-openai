@@ -14,10 +14,13 @@ fromEnvVariables :: IO Configuration
 fromEnvVariables = do
     apiKeyValue <- lookupEnv "OPENAI_API_KEY"
     orgValue <- lookupEnv "OPENAI_ORGANIZATION"
-    pure $ createEmptyConfiguration {
-        apiKey = T.pack $ fromMaybe "" apiKeyValue,
-        organization = T.pack $ fromMaybe "" orgValue
-    }
+    case apiKeyValue of
+        Nothing -> error "Error: Missing environment variable 'OPENAI_API_KEY'! This variable is required and needs to be set before proceeding. "
+        Just apiKey -> pure $ createEmptyConfiguration {
+                                apiKey = T.pack apiKey,
+                                organization = T.pack $ fromMaybe "" orgValue
+                            }
+    
 
 fromValues :: Text -> Text -> Configuration
 fromValues apiKeyValue orgValue = createEmptyConfiguration {
