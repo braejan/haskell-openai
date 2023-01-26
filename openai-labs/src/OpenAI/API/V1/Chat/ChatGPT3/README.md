@@ -7,6 +7,7 @@ To install this project, run the following command in your terminal:
 ```bash
 cabal install exe:openai-labs
 ```
+Execute the final binary and it will open a welcome screen like the next one:
 ```bash
   _   _   _   _   _   _   _     _   _     _   _   _   _   _   _
  / \ / \ / \ / \ / \ / \ / \   / \ / \   / \ / \ / \ / \ / \ / \
