@@ -58,6 +58,8 @@ library
         OpenAI.API.V1.Edit.Client
         OpenAI.API.V1.Image.Client
         OpenAI.API.V1.Model.Client
+        OpenAI.API.V1.Util.Completion.ChoiceUtil
+        OpenAI.API.V1.Util.Completion.ResponseUtil
         OpenAI.API.V1.Util.EditUtil
 
     -- Modules included in this library but not exported.
