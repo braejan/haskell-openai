@@ -8,15 +8,7 @@ import qualified Data.Text.IO as TIO
 import OpenAI.API.V1.Util.Completion.ChoiceUtil (showAllTextFromChoices)
 import OpenAI.API.V1.Util.Completion.ResponseUtil (getChoicesFromResponse)
 import Control.Monad (forever)
-
-
-header :: Text
-header = " _______       ______  __             ______      ___________   ______________        ____________________________\n\
-          \___    |      ___  / / /_____ __________  /_________  /__  /   __  ____/__  /_______ __  /__  ____/__  __ \\__  __/_|__  /\n\
-          \__  /| |      __  /_/ /_  __ `/_  ___/_  //_/  _ \\_  /__  /    _  /    __  __ \\  __ `/  __/  / __ __  /_/ /_  /  ___/_ < \n\
-          \_  ___ |      _  __  / / /_/ /_(__  )_  ,<  /  __/  / _  /     / /___  _  / / / /_/ // /_ / /_/ / _  ____/_  /   ____/ / \n\
-          \/_/  |_|      /_/ /_/  \\__,_/ /____/ /_/|_| \\___//_/  /_/      \\____/  /_/ /_/\\__,_/ \\__/ \\____/  /_/     /_/    /____/  \n\n"
-
+import OpenAI.API.V1.Chat.ChatGPT3.Instruction (chatBotMode, fullHeader)
 
 callChatGPT3 :: Text -> IO(Either Text Response)
 callChatGPT3 input = createCompletion completionRequest{
@@ -39,30 +31,23 @@ showEitherErorOrResponse ioEither = do
             "\nTry asking something:"
         Right response -> showAllTextFromChoices $  getChoicesFromResponse response
 
-salute :: IO()
-salute = do
-    let input = "Think you are the 'Amazing Haskell CLI Chatbot'. You're built using Haskell.\
-                \This CLI can be used for everyone not only Haskell developers. Is created to\
-                \ chat with you a OS terminal.\n\
-                \The Haskell code can be found at https://github.com/braejan/haskell-openai.\
-                \Now, Say hello to the new user who just connected! It should be a nice well\
-                \come that invite the user to use you. Don't forget to use emojis in the message."
-    showEitherErorOrResponse $ callChatGPT3 input
-
 talk :: Text -> IO ()
 talk = showEitherErorOrResponse . callChatGPT3
 
+startChat :: IO()
+startChat = do
+    putStrLn "🚀 Starting..."
+    talk chatBotMode
+
 wellcome :: IO()
 wellcome = do
-    TIO.putStrLn header
-    salute
+    TIO.putStrLn fullHeader
+    startChat
 
 chatBot :: IO()
 chatBot = do
     wellcome
     forever $ do
-        putStr "📝"
-          >> do
-            putStr "💬 "
-            TIO.getLine
+        putStrLn "📝📝📝📝📝"
+          >> TIO.getLine
           >>= talk
