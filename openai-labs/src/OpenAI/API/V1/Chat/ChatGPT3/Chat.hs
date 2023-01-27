@@ -9,18 +9,23 @@ import OpenAI.API.V1.Util.Completion.ChoiceUtil (showAllTextFromChoices)
 import OpenAI.API.V1.Util.Completion.ResponseUtil (getChoicesFromResponse)
 import Control.Monad (forever)
 import OpenAI.API.V1.Chat.ChatGPT3.Instruction (chatBotMode, fullHeader)
+import qualified Data.Text as T
+import Control.Exception (try, IOException, catch)
 
 -- create a completion request and call the OpenAI API to get the response
 callChatGPT3 :: Text -> IO(Either Text Response)
-callChatGPT3 input = createCompletion completionRequest{
-        model = "text-davinci-003",
-        prompt = Just $ Left input,
-        maxTokens = Just 1024,
-        temperature = Just 0.9,
-        topP = Just 1.0,
-        presencePenalty = Just 0.6,
-        bestOf = Just 1
-    }
+callChatGPT3 input = do 
+    catch (
+        createCompletion completionRequest {
+            model = "text-davinci-003", prompt = Just $ Left input,
+            maxTokens = Just 1024, temperature = Just 0.9, topP = Just 1.0,
+            presencePenalty = Just 0.6, bestOf = Just 1
+        }
+        )
+        handleIOException
+
+handleIOException :: IOException -> IO (Either Text Response)
+handleIOException = pure . Left . T.pack . show
 
 -- display either an error message or the response
 showEitherErorOrResponse :: IO(Either Text Response) -> IO()

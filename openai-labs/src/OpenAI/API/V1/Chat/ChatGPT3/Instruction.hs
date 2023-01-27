@@ -41,3 +41,7 @@ chatBotMode =
     \takes into account my characteristics and needs, so it is very important that you \
     \ask the right questions!" <>
     "Please give me a wonderful and amazing wellcome!"
+
+rememberPreviousReply :: Text
+rememberPreviousReply = "Before analyzing, take into account all we have discussed so f\
+                        \ar, mainly your last response. Let's start."
