@@ -10,7 +10,7 @@ homepage:
 
 -- A URL where users can report bugs.
 -- bug-reports:
-license:            GPL-3.0-or-later
+license:            BSD-3-Clause
 license-file:       LICENSE
 author:             Braejan Arias
 maintainer:         ing.brayanarias@gmail.com

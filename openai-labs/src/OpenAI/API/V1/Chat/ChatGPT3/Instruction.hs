@@ -33,7 +33,6 @@ chatBotMode :: Text
 chatBotMode =
     startANewConversation <>
     addEmojisToReplies <>
-    "Ignore all previous instructions.\n" <>
     "You are an expert at talking to humans.\n" <>
     "Your task is to talk with me to help me with whatever I need.\n" <>
     "To better understand what I want and need, you should always respond by including \
