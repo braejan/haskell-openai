@@ -4,7 +4,7 @@
 module OpenAI.API.V1.Edit.Response where
 import Data.Text (Text)
 import OpenAI.API.V1.Edit.Choice (Choice)
-import OpenAI.API.V1.Common.Usage (Usage, createEmptyUsage)
+import OpenAI.API.V1.Common.Usage (Usage, createUsage)
 import GHC.Generics (Generic)
 import Data.Aeson (ToJSON (toEncoding), FromJSON, Value (Object), (.:), KeyValue ((.=)), pairs)
 import Data.Aeson.Types (FromJSON(parseJSON), typeMismatch)
@@ -22,7 +22,7 @@ createEmptyResponse = Response {
     object = "",
     created = 0,
     choices = [],
-    usage = createEmptyUsage
+    usage = createUsage
 }
 
 instance ToJSON Response where

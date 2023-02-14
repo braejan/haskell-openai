@@ -11,7 +11,6 @@ import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
 import OpenAI.API.V1.Edit.ChoiceTest(createDefaultChoice)
-import OpenAI.API.V1.Common.UsageTest(createDefaultUsage)
 import OpenAI.API.V1.Edit.Choice (Choice (..))
 import OpenAI.API.V1.Edit.Response (Response (..))
 import OpenAI.API.V1.Common.Usage (Usage (..))
@@ -75,7 +74,7 @@ createDefaultResponse = Response {
   ],
   usage  = Usage {
     promptTokens = 5,
-    completionTokens = 7,
+    completionTokens = Just 7,
     totalTokens = 12
   }
 }

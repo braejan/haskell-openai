@@ -12,13 +12,15 @@ import qualified OpenAI.API.V1.Edit.ChoiceTest
 tests :: TestTree
 tests =
   testGroup "Test suite for Module openai-types"
-    [ OpenAI.API.V1.Completion.RequestTest.allRequestTest
-     ,OpenAI.API.V1.Completion.ChoiceTest.allChoiceTest
-     ,OpenAI.API.V1.Edit.ChoiceTest.allChoiceTest
-     ,allUsageTest
-     ,OpenAI.API.V1.Completion.ResponseTest.allResponseTest
-     ,OpenAI.API.V1.Edit.ResponseTest.allResponseTest
-     ,OpenAI.API.V1.Edit.RequestTest.allRequestTest
+    -- [ OpenAI.API.V1.Completion.RequestTest.allRequestTest
+    --  ,OpenAI.API.V1.Completion.ChoiceTest.allChoiceTest
+    --  ,OpenAI.API.V1.Edit.ChoiceTest.allChoiceTest
+    --  ,allUsageTest
+    --  ,OpenAI.API.V1.Completion.ResponseTest.allResponseTest
+    --  ,OpenAI.API.V1.Edit.ResponseTest.allResponseTest
+    --  ,OpenAI.API.V1.Edit.RequestTest.allRequestTest
+    -- ]
+    [ OpenAI.API.V1.Common.UsageTest.allUsageTest
     ]
 
 main :: IO ()

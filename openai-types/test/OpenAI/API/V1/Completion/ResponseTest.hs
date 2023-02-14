@@ -11,9 +11,8 @@ import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
 import OpenAI.API.V1.Completion.ChoiceTest(createDefaultChoice, createEmptyChoice)
-import OpenAI.API.V1.Common.UsageTest(createDefaultUsage, createEmptyUsage)
 import OpenAI.API.V1.Completion.Choice (Choice)
-import OpenAI.API.V1.Common.Usage (Usage)
+import OpenAI.API.V1.Common.Usage (Usage, createUsage)
 
 jsonString :: String
 jsonString = "{\"id\":\"cmpl-GERzeJQ4lvqPk8SkZu4XMIuR\",\"object\":\"text_completion\",\"created\":1586839808,\"model\":\"text-davinci:003\",\"choices\":[{\"text\":\"This is indeed a test\",\"index\":0,\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":7,\"total_tokens\":12}}"
@@ -64,9 +63,9 @@ testDeSerialization = testCase "Deserialization of a default Response test to St
 
 createDefaultResponse :: Response
 createDefaultResponse = 
-  Response (pack "cmpl-GERzeJQ4lvqPk8SkZu4XMIuR") (pack "text_completion") 1586839808 (pack "text-davinci:003") [createDefaultChoice] createDefaultUsage
+  Response (pack "cmpl-GERzeJQ4lvqPk8SkZu4XMIuR") (pack "text_completion") 1586839808 (pack "text-davinci:003") [createDefaultChoice] createUsage
 
 
 createEmptyResponse :: Response
 createEmptyResponse = 
-  Response (pack "") (pack "") 0 (pack "") [createEmptyChoice] createEmptyUsage
+  Response (pack "") (pack "") 0 (pack "") [createEmptyChoice] createUsage

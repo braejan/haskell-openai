@@ -19,7 +19,7 @@ data Choice = Choice
   , finishReason :: Text
     -- ^ The reason the text generation was finished (e.g. "length")
   } deriving (Show, Eq, Generic)
-
+-- | Options for encoding a Choice object to JSON
 instance ToJSON Choice where
   toEncoding Choice {..} = pairs $ mconcat
     [ "text" .= text

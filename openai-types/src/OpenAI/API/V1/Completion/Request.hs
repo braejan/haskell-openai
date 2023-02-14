@@ -61,76 +61,79 @@ data Request = Request
   -- ^ Optional.
   } deriving (Show, Eq, Generic)
 
-instance ToJSON Request where
-  toEncoding Request {..} = pairs $ mconcat
-    [ "model" .= model
-    , maybe mempty parseFromEitherTextOrArrayText prompt "prompt"
-    , maybeEmpty "suffix" suffix
-    , maybeEmpty "max_tokens" maxTokens
-    , maybeEmpty "temperature" temperature
-    , maybeEmpty "top_p" topP
-    , maybeEmpty "n" n
-    , maybeEmpty "stream" stream
-    , maybeEmpty "logprobs" logprobs
-    , maybeEmpty "echo" echo
-    , maybe mempty parseFromEitherTextOrArrayText stop "stop"
-    , maybeEmpty "presence_penalty" presencePenalty
-    , maybeEmpty "frequency_penalty" frequencyPenalty
-    , maybeEmpty "best_of" bestOf
-    , maybeEmpty "logit_bias" logitBias
-    , maybeEmpty "user" user
-    ]
+instance ToJSON Request
+instance FromJSON Request
 
-parseFromEitherTextOrArrayText (Left x) key = key .= x
-parseFromEitherTextOrArrayText (Right xs) key = key .= xs
+-- instance ToJSON Request where
+--   toEncoding Request {..} = pairs $ mconcat
+--     [ "model" .= model
+--     , maybe mempty parseFromEitherTextOrArrayText prompt "prompt"
+--     , maybeEmpty "suffix" suffix
+--     , maybeEmpty "max_tokens" maxTokens
+--     , maybeEmpty "temperature" temperature
+--     , maybeEmpty "top_p" topP
+--     , maybeEmpty "n" n
+--     , maybeEmpty "stream" stream
+--     , maybeEmpty "logprobs" logprobs
+--     , maybeEmpty "echo" echo
+--     , maybe mempty parseFromEitherTextOrArrayText stop "stop"
+--     , maybeEmpty "presence_penalty" presencePenalty
+--     , maybeEmpty "frequency_penalty" frequencyPenalty
+--     , maybeEmpty "best_of" bestOf
+--     , maybeEmpty "logit_bias" logitBias
+--     , maybeEmpty "user" user
+--     ]
 
-instance FromJSON Request where
-  parseJSON (Object o) = do
-    model <- o .: "model"
-    prompt <- do
-      promptObject <- o .: "prompt"
-      choice <- parseEitherTextOrArrayText promptObject "prompt"
-      case choice of
-        Left choiceText -> return $ Just $ Left choiceText
-        Right choiceArray -> return $ Just $ Right choiceArray
-    suffix <- o .:? "suffix"
-    maxTokens <- o .:? "max_tokens"
-    temperature <- o .:? "temperature"
-    topP <- o .:? "top_p"
-    n <- o .:? "n"
-    stream <- o .:? "stream"
-    logprobs <- o .:? "logprobs"
-    echo <- o .:? "echo"
-    stop <- do
-      promptObject <- o .: "stop"
-      choice <- parseEitherTextOrArrayText promptObject "stop"
-      case choice of
-        Left choiceText -> return $ Just $ Left choiceText
-        Right choiceArray -> return $ Just $ Right choiceArray
-    presencePenalty <- o .:? "presence_penalty"
-    frequencyPenalty <- o .:? "frequency_penalty"
-    bestOf <- o .:? "best_of"
-    logitBias <- o .:? "logit_bias"
-    user <- o .:? "user"
-    return $ Request {..}
-  parseJSON invalid = typeMismatch "Request" invalid
+-- parseFromEitherTextOrArrayText (Left x) key = key .= x
+-- parseFromEitherTextOrArrayText (Right xs) key = key .= xs
 
-
--- | Parse 'Either' 'Text' or 'Array' 'Text'
---
--- This function is used to parse fields that can be represented as a single string
--- or an array of strings, such as the 'prompt' and 'stop' fields in the 'Request' data type.
-parseEitherTextOrArrayText :: Value -> String -> Parser (Either Text [Text])
--- | If the value is an 'Array', parse the array as a list of 'Text' values
-parseEitherTextOrArrayText (Array arr) _ = do
-  list <- parseJSON (Array arr)
-  return $ Right list
--- | If the value is a 'String', return the 'String' as a 'Left' 'Text' value
-parseEitherTextOrArrayText (String s) _ = return $ Left s
--- | If the value is not a 'String' or an 'Array', throw a 'typeMismatch' error
-parseEitherTextOrArrayText invalid key = typeMismatch key invalid
+-- instance FromJSON Request where
+--   parseJSON (Object o) = do
+--     model <- o .: "model"
+--     prompt <- do
+--       promptObject <- o .: "prompt"
+--       choice <- parseEitherTextOrArrayText promptObject "prompt"
+--       case choice of
+--         Left choiceText -> return $ Just $ Left choiceText
+--         Right choiceArray -> return $ Just $ Right choiceArray
+--     suffix <- o .:? "suffix"
+--     maxTokens <- o .:? "max_tokens"
+--     temperature <- o .:? "temperature"
+--     topP <- o .:? "top_p"
+--     n <- o .:? "n"
+--     stream <- o .:? "stream"
+--     logprobs <- o .:? "logprobs"
+--     echo <- o .:? "echo"
+--     stop <- do
+--       promptObject <- o .: "stop"
+--       choice <- parseEitherTextOrArrayText promptObject "stop"
+--       case choice of
+--         Left choiceText -> return $ Just $ Left choiceText
+--         Right choiceArray -> return $ Just $ Right choiceArray
+--     presencePenalty <- o .:? "presence_penalty"
+--     frequencyPenalty <- o .:? "frequency_penalty"
+--     bestOf <- o .:? "best_of"
+--     logitBias <- o .:? "logit_bias"
+--     user <- o .:? "user"
+--     return $ Request {..}
+--   parseJSON invalid = typeMismatch "Request" invalid
 
 
+-- -- | Parse 'Either' 'Text' or 'Array' 'Text'
+-- --
+-- -- This function is used to parse fields that can be represented as a single string
+-- -- or an array of strings, such as the 'prompt' and 'stop' fields in the 'Request' data type.
+-- parseEitherTextOrArrayText :: Value -> String -> Parser (Either Text [Text])
+-- -- | If the value is an 'Array', parse the array as a list of 'Text' values
+-- parseEitherTextOrArrayText (Array arr) _ = do
+--   list <- parseJSON (Array arr)
+--   return $ Right list
+-- -- | If the value is a 'String', return the 'String' as a 'Left' 'Text' value
+-- parseEitherTextOrArrayText (String s) _ = return $ Left s
+-- -- | If the value is not a 'String' or an 'Array', throw a 'typeMismatch' error
+-- parseEitherTextOrArrayText invalid key = typeMismatch key invalid
+
+-- | Default 'Request' value
 completionRequest :: Request
 completionRequest = Request {
     model = "",
