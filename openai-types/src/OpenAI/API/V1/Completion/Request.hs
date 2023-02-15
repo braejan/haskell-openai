@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE InstanceSigs #-}
 module OpenAI.API.V1.Completion.Request where
 
 import Data.Text (Text)
@@ -8,7 +9,7 @@ import GHC.Generics (Generic)
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Maybe (fromMaybe)
-import Data.Aeson (ToJSON (toEncoding), FromJSON (parseJSON), toJSON, object, KeyValue ((.=)), Value (Null, Object, Array), pairs, withObject, (.:), (.:?), Key)
+import Data.Aeson (ToJSON (toEncoding), FromJSON (parseJSON), toJSON, object, KeyValue ((.=)), Value (Null, Object, Array), pairs, withObject, (.:), (.:?), Key, Encoding)
 import Data.Aeson.Types
     ( pairs,
       (.:),
@@ -23,7 +24,6 @@ import Data.Aeson.Types
       ToJSON(toJSON, toEncoding),
       typeMismatch,
       Parser )
-import OpenAI.API.V1.Common.Helper (maybeEmpty)
 
 -- | Data type representing a request to the OpenAI API
 data Request = Request
@@ -62,76 +62,52 @@ data Request = Request
   } deriving (Show, Eq, Generic)
 
 instance ToJSON Request
-instance FromJSON Request
+instance FromJSON Request where
+  -- | Parse a 'Request' from a 'Value'
+  parseJSON :: Value -> Parser Request
+  parseJSON = withObject "Request" $ \o -> do
+    model <- o .: "model"
+    prompt <- o .:? "prompt" >>= maybeEmpty . parseEitherTextOrArrayText
+    suffix <- o .:? "suffix"
+    maxTokens <- o .:? "max_tokens"
+    temperature <- o .:? "temperature"
+    topP <- o .:? "top_p"
+    n <- o .:? "n"
+    stream <- o .:? "stream"
+    logprobs <- o .:? "logprobs"
+    echo <- o .:? "echo"
+    stop <- o .:? "stop" >>= maybeEmpty . parseEitherTextOrArrayText
+    presencePenalty <- o .:? "presence_penalty"
+    frequencyPenalty <- o .:? "frequency_penalty"
+    bestOf <- o .:? "best_of"
+    logitBias <- o .:? "logit_bias"
+    user <- o .:? "user"
+    return Request{..}
 
--- instance ToJSON Request where
---   toEncoding Request {..} = pairs $ mconcat
---     [ "model" .= model
---     , maybe mempty parseFromEitherTextOrArrayText prompt "prompt"
---     , maybeEmpty "suffix" suffix
---     , maybeEmpty "max_tokens" maxTokens
---     , maybeEmpty "temperature" temperature
---     , maybeEmpty "top_p" topP
---     , maybeEmpty "n" n
---     , maybeEmpty "stream" stream
---     , maybeEmpty "logprobs" logprobs
---     , maybeEmpty "echo" echo
---     , maybe mempty parseFromEitherTextOrArrayText stop "stop"
---     , maybeEmpty "presence_penalty" presencePenalty
---     , maybeEmpty "frequency_penalty" frequencyPenalty
---     , maybeEmpty "best_of" bestOf
---     , maybeEmpty "logit_bias" logitBias
---     , maybeEmpty "user" user
---     ]
-
--- parseFromEitherTextOrArrayText (Left x) key = key .= x
--- parseFromEitherTextOrArrayText (Right xs) key = key .= xs
-
--- instance FromJSON Request where
---   parseJSON (Object o) = do
---     model <- o .: "model"
---     prompt <- do
---       promptObject <- o .: "prompt"
---       choice <- parseEitherTextOrArrayText promptObject "prompt"
---       case choice of
---         Left choiceText -> return $ Just $ Left choiceText
---         Right choiceArray -> return $ Just $ Right choiceArray
---     suffix <- o .:? "suffix"
---     maxTokens <- o .:? "max_tokens"
---     temperature <- o .:? "temperature"
---     topP <- o .:? "top_p"
---     n <- o .:? "n"
---     stream <- o .:? "stream"
---     logprobs <- o .:? "logprobs"
---     echo <- o .:? "echo"
---     stop <- do
---       promptObject <- o .: "stop"
---       choice <- parseEitherTextOrArrayText promptObject "stop"
---       case choice of
---         Left choiceText -> return $ Just $ Left choiceText
---         Right choiceArray -> return $ Just $ Right choiceArray
---     presencePenalty <- o .:? "presence_penalty"
---     frequencyPenalty <- o .:? "frequency_penalty"
---     bestOf <- o .:? "best_of"
---     logitBias <- o .:? "logit_bias"
---     user <- o .:? "user"
---     return $ Request {..}
---   parseJSON invalid = typeMismatch "Request" invalid
+parseEitherTextOrArrayText :: Maybe Value -> Parser (Either Text [Text])
+-- | If the value is 'Null', return an empty 'Left' value
+parseEitherTextOrArrayText Nothing = return $ Left ""
+-- | If the value is an 'Array', parse the array as a list of 'Text' values
+parseEitherTextOrArrayText (Just (Array arr)) = do
+  list <- parseJSON (Array arr)
+  return $ Right list
+-- | If the value is a 'String', parse the string as a 'Text' value
+parseEitherTextOrArrayText (Just (String str)) = do
+  text <- parseJSON (String str)
+  return $ Left text
 
 
--- -- | Parse 'Either' 'Text' or 'Array' 'Text'
--- --
--- -- This function is used to parse fields that can be represented as a single string
--- -- or an array of strings, such as the 'prompt' and 'stop' fields in the 'Request' data type.
--- parseEitherTextOrArrayText :: Value -> String -> Parser (Either Text [Text])
+
+
 -- -- | If the value is an 'Array', parse the array as a list of 'Text' values
 -- parseEitherTextOrArrayText (Array arr) _ = do
 --   list <- parseJSON (Array arr)
 --   return $ Right list
--- -- | If the value is a 'String', return the 'String' as a 'Left' 'Text' value
--- parseEitherTextOrArrayText (String s) _ = return $ Left s
--- -- | If the value is not a 'String' or an 'Array', throw a 'typeMismatch' error
--- parseEitherTextOrArrayText invalid key = typeMismatch key invalid
+-- -- | If the value is a 'String', parse the string as a 'Text' value
+-- parseEitherTextOrArrayText (String str) _ = do
+--   text <- parseJSON (String str)
+--   return $ Left text
+
 
 -- | Default 'Request' value
 completionRequest :: Request
@@ -153,3 +129,10 @@ completionRequest = Request {
     logitBias = Nothing,
     user = Nothing
 }
+
+maybeEmpty :: Parser (Either a b) -> Parser (Maybe (Either a b))
+maybeEmpty p = do
+  either <- p
+  return $ case either of
+    Left _ -> Nothing
+    Right _ -> Just either
