@@ -1,12 +1,7 @@
 module Main(main) where
 import Test.Tasty (TestTree, defaultMain, testGroup)
-import OpenAI.API.V1.Completion.RequestTest (allRequestTest)
-import OpenAI.API.V1.Edit.RequestTest (allRequestTest)
-import OpenAI.API.V1.Completion.ChoiceTest (allChoiceTest)
-import OpenAI.API.V1.Common.UsageTest (allUsageTest)
-import OpenAI.API.V1.Completion.ResponseTest (allResponseTest)
-import OpenAI.API.V1.Edit.ResponseTest (allResponseTest)
-import qualified OpenAI.API.V1.Edit.ChoiceTest
+import qualified OpenAI.API.V1.Common.UsageTest
+import qualified OpenAI.API.V1.Completion.ChoiceTest
 
 -- Test suite definition
 tests :: TestTree
@@ -21,6 +16,7 @@ tests =
     --  ,OpenAI.API.V1.Edit.RequestTest.allRequestTest
     -- ]
     [ OpenAI.API.V1.Common.UsageTest.allUsageTest
+    , OpenAI.API.V1.Completion.ChoiceTest.allCompletionChoiceTest
     ]
 
 main :: IO ()

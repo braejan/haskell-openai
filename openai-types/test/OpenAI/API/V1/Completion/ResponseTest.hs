@@ -10,8 +10,7 @@ import OpenAI.API.V1.Completion.Response(Response(..))
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
-import OpenAI.API.V1.Completion.ChoiceTest(createDefaultChoice, createEmptyChoice)
-import OpenAI.API.V1.Completion.Choice (Choice)
+import OpenAI.API.V1.Completion.Choice (Choice, createCompletionChoice)
 import OpenAI.API.V1.Common.Usage (Usage, createUsage)
 
 jsonString :: String
@@ -63,9 +62,9 @@ testDeSerialization = testCase "Deserialization of a default Response test to St
 
 createDefaultResponse :: Response
 createDefaultResponse = 
-  Response (pack "cmpl-GERzeJQ4lvqPk8SkZu4XMIuR") (pack "text_completion") 1586839808 (pack "text-davinci:003") [createDefaultChoice] createUsage
+  Response (pack "cmpl-GERzeJQ4lvqPk8SkZu4XMIuR") (pack "text_completion") 1586839808 (pack "text-davinci:003") [createCompletionChoice] createUsage
 
 
 createEmptyResponse :: Response
 createEmptyResponse = 
-  Response (pack "") (pack "") 0 (pack "") [createEmptyChoice] createUsage
+  Response (pack "") (pack "") 0 (pack "") [createCompletionChoice] createUsage
