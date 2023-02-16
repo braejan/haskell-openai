@@ -7,7 +7,7 @@ import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import OpenAI.API.V1.Edit.Request(Request(..), createEmptyRequest)
+import OpenAI.API.V1.Edit.Request(Request(..), editRequest)
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Either (isLeft)
@@ -69,7 +69,7 @@ testDeSerialization = testCase "Deserialization of a default Request test to Str
 testDeSerializationMandatory :: TestTree
 testDeSerializationMandatory = testCase "Deserialization of a default Request test to String." $ do
   let expected = BS.pack jsonStringMandatory
-  let request = createEmptyRequest {
+  let request = editRequest {
     model = "text-davinci-002",
     instruction = "Make the sentence more interesting"
   }

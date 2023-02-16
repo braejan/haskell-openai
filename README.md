@@ -38,7 +38,6 @@ Once you have your API key variables set up, you can use the library like this:
 module Main where
 import OpenAI.API.V1.Completion.Client (createCompletion)
 import OpenAI.API.V1.Completion.Request (completionRequest, Request (..))
-import qualified Data.Text as T
 main :: IO ()
 main = do
     result <- createCompletion completionRequest{
@@ -47,8 +46,8 @@ main = do
         maxTokens = Just 256
     }
     case result of
-        Left error -> putStrLn $ T.unpack ("😰 Error: \n" <> error)
-        Right response -> putStrLn $ "🫡 Response: \n" <> show response
+        Left error -> print error
+        Right response -> print response
 ```
 
 ![](https://lift.sonatype.com/api/badge/github.com/braejan/haskell-openai)

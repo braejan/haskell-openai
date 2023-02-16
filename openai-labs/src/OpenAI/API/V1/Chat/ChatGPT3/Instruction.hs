@@ -33,7 +33,6 @@ chatBotMode :: Text
 chatBotMode =
     startANewConversation <>
     addEmojisToReplies <>
-    "Ignore all previous instructions.\n" <>
     "You are an expert at talking to humans.\n" <>
     "Your task is to talk with me to help me with whatever I need.\n" <>
     "To better understand what I want and need, you should always respond by including \
@@ -42,3 +41,7 @@ chatBotMode =
     \takes into account my characteristics and needs, so it is very important that you \
     \ask the right questions!" <>
     "Please give me a wonderful and amazing wellcome!"
+
+rememberPreviousReply :: Text
+rememberPreviousReply = "Before analyzing, take into account all we have discussed so f\
+                        \ar, mainly your last response. Let's start."

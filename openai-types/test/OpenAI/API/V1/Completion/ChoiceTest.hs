@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 module OpenAI.API.V1.Completion.ChoiceTest where
 
 import Data.Aeson
@@ -6,84 +7,79 @@ import Data.Text(pack)
 import GHC.Generics
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertEqual, testCase, assertBool)
-import OpenAI.API.V1.Completion.Choice(Choice(..))
+import OpenAI.API.V1.Completion.Choice(Choice(..), createCompletionChoice)
 import qualified Data.ByteString.Lazy.Char8 as BS
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, isNothing)
 import Data.Either (isLeft)
+import Data.String (fromString)
 
-
-jsonString :: String
-jsonString = "{\"text\":\"This is indeed a test\",\"index\":0,\"finish_reason\":\"length\"}"
-
-jsonStringAllFields :: String
-jsonStringAllFields = "{\"text\":\"This is indeed a test\",\"index\":0,\"logprobs\":[0.0,1.0,2.0],\"finish_reason\":\"length\"}"
-
--- Test suite definition
-allChoiceTest :: TestTree
-allChoiceTest =
+-- | Test serialization and deserialization of a Choice test suite
+allCompletionChoiceTest :: TestTree
+allCompletionChoiceTest =
   testGroup "Test suite for Module Completion openai-types: Choice"
-    [ testSerializationAnDeserialization,
-      testStringSerialization,
-      testEmptyStringSerialization,
-      testDeSerialization,
-      testDeSerializationLogprobs
+    [ testEmptyDeSerialization --1
+    , testEmptyString --2
+    , testRequiredFields --3
+    , testAllFields --4
+    , testExtraFields --5
+    , testInvalidTextType --6
+    , testInvalidIndexType --7
+    , testCreateCompletionChoice --8
     ]
 
+
 -- Test case 1:
-testSerializationAnDeserialization :: TestTree
-testSerializationAnDeserialization =
-  testCase "Serialize and deserialize a Choice JSON" $ do
-    let expected = createDefaultChoice
-        json = encode expected
-        choice' = decode json
-    assertEqual "1=>Deserialized value should match original value" (Just expected) choice'
+testEmptyDeSerialization :: TestTree
+testEmptyDeSerialization = testCase "Deserialization of an empty JSON and should be Nothing." $ do
+  let choice' = decode (fromString "{}") :: Maybe Choice
+  assertEqual "Test 1: Deserialized value should match default Choice value" Nothing choice'
 
 -- Test case 2:
-testStringSerialization :: TestTree
-testStringSerialization = testCase "Serialization of String value" $ do
-  let json = BS.pack jsonString
-      expected = Right createDefaultChoice
-      actual = eitherDecode json :: Either String Choice
-  assertEqual "2=>Parsed value should match expected value" expected actual
+testEmptyString :: TestTree
+testEmptyString = testCase "Deserialization of an empty string to Choice should result in an error." $ do
+  let choice' = decode $ fromString "\"\"" :: Maybe Choice
+  assertBool "Test 2: Deserializing an empty string to Choice should result in an error." (isNothing choice')
 
 -- Test case 3:
-testEmptyStringSerialization :: TestTree
-testEmptyStringSerialization = testCase "Serialization of a Empty string value" $ do
-  let json = BS.pack ""
-      actual = eitherDecode json :: Either String Choice
-  assertBool "3=>Parsed value should match expected value" (isLeft actual)
-
+testRequiredFields :: TestTree
+testRequiredFields = testCase "Deserialization of incomplete JSON to Choice should result in an error." $ do
+  let input = "{\"text\":\"hello\"}" -- "index" field is missing
+      choice' = decode (fromString input) :: Maybe Choice
+  assertBool "Test 3: Deserializing incomplete JSON to Choice should result in an error." (isNothing choice')
 
 -- Test case 4:
-testDeSerialization :: TestTree
-testDeSerialization = testCase "Deserialization of a default Choice test to String." $ do
-  let expected = BS.pack jsonString
-  let choice = createDefaultChoice
-  let actual = encode choice
-  assertEqual "4=>Parsed value should match expected value" expected actual
+testAllFields :: TestTree
+testAllFields = testCase "Deserialization of complete JSON to Choice should result in a valid Choice." $ do
+  let input = "{\"text\":\"Which color do you prefer?\",\"index\":0,\"logprobs\":[0.1,0.2],\"finish_reason\":\"length\"}"
+      expectedChoice = Choice "Which color do you prefer?" 0 (Just [0.1,0.2]) "length"
+      actualChoice = decode (fromString input) :: Maybe Choice
+  assertEqual "Test 4: Deserialized value should match expected Choice value" (Just expectedChoice) actualChoice
 
 -- Test case 5:
-testDeSerializationLogprobs :: TestTree
-testDeSerializationLogprobs = testCase "Deserialization of a default Choice test to String." $ do
-  let expected = BS.pack jsonStringAllFields
-  let choice = createDefaultChoice {logprobs = Just [0.0,1.0,2.0]}
-  let actual = encode choice
-  assertEqual "5=>Parsed value should match expected value" expected actual
+testExtraFields :: TestTree
+testExtraFields = testCase "Deserialization of JSON with extra fields to Choice should result in a valid Choice." $ do
+  let input = "{\"text\":\"Which color do you prefer?\",\"index\":0,\"logprobs\":[0.1,0.2],\"finish_reason\":\"length\",\"extra_field\":\"extra_value\"}"
+      expectedChoice = Choice "Which color do you prefer?" 0 (Just [0.1,0.2]) "length"
+      actualChoice = decode (fromString input) :: Maybe Choice
+  assertEqual "Test 5: Deserializing JSON with extra fields to Choice should result in a valid Choice." (Just expectedChoice) actualChoice
 
--- | Create a new 'Choice' value with default test values
-createDefaultChoice = Choice
-  {
-  text = pack "This is indeed a test",
-  index = 0,
-  logprobs = Nothing,
-  finishReason = pack "length"
-  }
+-- Test case 6:
+testInvalidTextType :: TestTree
+testInvalidTextType = testCase "Deserialization of JSON with invalid type for text field to Choice should result in an error." $ do
+  let input = "{\"text\":0,\"index\":0,\"logprobs\":[0.1,0.2],\"finish_reason\":\"length\"}"
+      choice' = decode (fromString input) :: Maybe Choice
+  assertBool "Test 6: Deserializing JSON with invalid type for text field to Choice should result in an error." (isNothing choice')
 
--- | Create a new 'Choice' value with default test values
-createEmptyChoice :: Choice
-createEmptyChoice = Choice
-  { text = pack ""
-  , index = 0
-  , logprobs = Nothing
-  , finishReason = pack ""
-  }
+-- Test case 7:
+testInvalidIndexType :: TestTree
+testInvalidIndexType = testCase "Deserialization of JSON with invalid type for index field to Choice should result in an error." $ do
+  let input = "{\"text\":\"Which color do you prefer?\",\"index\":\"0\",\"logprobs\":[0.1,0.2],\"finish_reason\":\"length\"}"
+      choice' = decode (fromString input) :: Maybe Choice
+  assertBool "Test 7: Deserializing JSON with invalid type for index field to Choice should result in an error." (isNothing choice')
+
+-- Test case 8:
+testCreateCompletionChoice :: TestTree
+testCreateCompletionChoice = testCase "Create a valid Choice." $ do
+  let expectedChoice = Choice "" 0 Nothing ""
+      actualChoice = createCompletionChoice 
+  assertEqual "Test 8: Choice created should match expected Choice value" expectedChoice actualChoice
