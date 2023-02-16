@@ -3,6 +3,7 @@ import Test.Tasty (TestTree, defaultMain, testGroup)
 import qualified OpenAI.API.V1.Common.UsageTest
 import qualified OpenAI.API.V1.Completion.ChoiceTest
 import qualified OpenAI.API.V1.Completion.RequestTest
+import qualified OpenAI.API.V1.Completion.ResponseTest
 
 -- Test suite definition
 tests :: TestTree
@@ -19,6 +20,7 @@ tests =
     [ OpenAI.API.V1.Common.UsageTest.allUsageTest
     , OpenAI.API.V1.Completion.ChoiceTest.allCompletionChoiceTest
     , OpenAI.API.V1.Completion.RequestTest.allCompletionRequestTest
+    , OpenAI.API.V1.Completion.ResponseTest.allCompletionResponseTest
     ]
 
 main :: IO ()
