@@ -8,8 +8,8 @@ import Data.Text (Text)
 import GHC.Generics (Generic)
 import Data.Map (Map)
 import qualified Data.Map as Map
-import Data.Maybe (fromMaybe)
-import Data.Aeson (ToJSON (toEncoding), FromJSON (parseJSON), toJSON, object, KeyValue ((.=)), Value (Null, Object, Array), pairs, withObject, (.:), (.:?), Key, Encoding)
+import Data.Maybe (fromMaybe, catMaybes)
+import Data.Aeson (ToJSON (toEncoding), FromJSON (parseJSON), toJSON, object, KeyValue ((.=)), Value (Null, Object, Array), pairs, withObject, (.:), (.:?), Key, Encoding, withText, withArray)
 import Data.Aeson.Types
     ( pairs,
       (.:),
@@ -24,6 +24,7 @@ import Data.Aeson.Types
       ToJSON(toJSON, toEncoding),
       typeMismatch,
       Parser )
+import Data.Vector (toList)
 
 -- | Data type representing a request to the OpenAI API
 data Request = Request
@@ -61,13 +62,33 @@ data Request = Request
   -- ^ Optional.
   } deriving (Show, Eq, Generic)
 
-instance ToJSON Request
+-- Maybe exists a better way to do this
+
+instance ToJSON Request where
+  toEncoding Request {..} = pairs $ mconcat
+    [ "model" .= model
+    , maybe mempty parseFromEitherTextOrArrayText prompt "prompt"
+    , maybeEmpty "suffix" suffix
+    , maybeEmpty "max_tokens" maxTokens
+    , maybeEmpty "temperature" temperature
+    , maybeEmpty "top_p" topP
+    , maybeEmpty "n" n
+    , maybeEmpty "stream" stream
+    , maybeEmpty "logprobs" logprobs
+    , maybeEmpty "echo" echo
+    , maybe mempty parseFromEitherTextOrArrayText stop "stop"
+    , maybeEmpty "presence_penalty" presencePenalty
+    , maybeEmpty "frequency_penalty" frequencyPenalty
+    , maybeEmpty "best_of" bestOf
+    , maybeEmpty "logit_bias" logitBias
+    , maybeEmpty "user" user
+    ]
 instance FromJSON Request where
   -- | Parse a 'Request' from a 'Value'
   parseJSON :: Value -> Parser Request
   parseJSON = withObject "Request" $ \o -> do
     model <- o .: "model"
-    prompt <- o .:? "prompt" >>= maybeEmpty . parseEitherTextOrArrayText
+    prompt <- o .:? "prompt" >>= traverse parseEitherTextOrArrayText
     suffix <- o .:? "suffix"
     maxTokens <- o .:? "max_tokens"
     temperature <- o .:? "temperature"
@@ -76,7 +97,7 @@ instance FromJSON Request where
     stream <- o .:? "stream"
     logprobs <- o .:? "logprobs"
     echo <- o .:? "echo"
-    stop <- o .:? "stop" >>= maybeEmpty . parseEitherTextOrArrayText
+    stop <- o .:? "stop" >>= traverse parseEitherTextOrArrayText
     presencePenalty <- o .:? "presence_penalty"
     frequencyPenalty <- o .:? "frequency_penalty"
     bestOf <- o .:? "best_of"
@@ -95,18 +116,6 @@ parseEitherTextOrArrayText (Just (Array arr)) = do
 parseEitherTextOrArrayText (Just (String str)) = do
   text <- parseJSON (String str)
   return $ Left text
-
-
-
-
--- -- | If the value is an 'Array', parse the array as a list of 'Text' values
--- parseEitherTextOrArrayText (Array arr) _ = do
---   list <- parseJSON (Array arr)
---   return $ Right list
--- -- | If the value is a 'String', parse the string as a 'Text' value
--- parseEitherTextOrArrayText (String str) _ = do
---   text <- parseJSON (String str)
---   return $ Left text
 
 
 -- | Default 'Request' value
@@ -130,9 +139,9 @@ completionRequest = Request {
     user = Nothing
 }
 
-maybeEmpty :: Parser (Either a b) -> Parser (Maybe (Either a b))
-maybeEmpty p = do
-  either <- p
-  return $ case either of
-    Left _ -> Nothing
-    Right _ -> Just either
+parseFromEitherTextOrArrayText :: (KeyValue kv, ToJSON v1, ToJSON v2) => Either v1 v2 -> Key -> kv
+parseFromEitherTextOrArrayText (Left x) key = key .= x
+parseFromEitherTextOrArrayText (Right xs) key = key .= xs
+
+maybeEmpty :: (Monoid b, KeyValue b, ToJSON v) => Key -> Maybe v -> b
+maybeEmpty key = maybe mempty (key .=)
