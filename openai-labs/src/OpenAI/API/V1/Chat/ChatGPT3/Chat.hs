@@ -13,15 +13,9 @@ import qualified Data.Text as T
 import Control.Exception (try, IOException, catch)
 
 -- create a completion request and call the OpenAI API to get the response
-callChatGPT3 :: Text -> IO(Either Text Response)
-callChatGPT3 input = do 
-    catch (
-        createCompletion completionRequest {
-            model = "text-davinci-003", prompt = Just $ Left input,
-            maxTokens = Just 1024, temperature = Just 0.9, topP = Just 1.0,
-            presencePenalty = Just 0.6, bestOf = Just 1
-        }
-        )
+callChatGPT3 :: Text -> Request -> IO(Either Text Response)
+callChatGPT3 input request = do
+    catch (createCompletion request { prompt = Just $ Left input })
         handleIOException
 
 handleIOException :: IOException -> IO (Either Text Response)
@@ -38,15 +32,27 @@ showEitherErorOrResponse ioEither = do
             "\nTry asking something:"
         Right response -> showAllTextFromChoices $  getChoicesFromResponse response
 
+-- defaultRequest is a request with default parameters
+defaultRequest :: Request
+defaultRequest = completionRequest {
+        model = "text-davinci-003",
+        maxTokens = Just 1024,
+        topP = Just 1,
+        presencePenalty = Just 0.6,
+        frequencyPenalty = Just 0.1,
+        bestOf = Just 1
+    }
+
 -- display the response
-talk :: Text -> IO ()
-talk = showEitherErorOrResponse . callChatGPT3
+talk :: Request -> Text -> IO ()
+talk request input = do
+    showEitherErorOrResponse $ callChatGPT3 input request
 
 -- start the chat with a chatbot mode
 startChat :: IO()
 startChat = do
-    putStrLn "🚀 Starting..."
-    talk chatBotMode
+    putStrLn "🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 🚀 Starting..."
+    talk defaultRequest chatBotMode
 
 -- display the welcome message and start the chat
 wellcome :: IO()
@@ -54,10 +60,17 @@ wellcome = do
     TIO.putStrLn fullHeader
     startChat
 
--- start the chatbot
-chatBot :: IO()
-chatBot = do
+defaultChatBot :: IO()
+defaultChatBot = do
     wellcome
     forever $ do
         putStrLn "📝📝📝📝📝"
-        TIO.getLine >>= talk
+        TIO.getLine >>= talk defaultRequest
+-- start the chatbot
+chatBot :: Request -> IO()
+chatBot request = do
+    wellcome
+    forever $ do
+        putStrLn "📝📝📝📝📝"
+        TIO.getLine >>= talk request 
+
