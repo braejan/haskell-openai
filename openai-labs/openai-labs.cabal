@@ -25,6 +25,7 @@ library
         OpenAI.API.V1.Chat.ChatGPT3.Chat
         OpenAI.API.V1.Chat.ChatGPT3.Helper
         OpenAI.API.V1.Chat.ChatGPT3.Instruction
+        OpenAI.API.V1.Chat.ChatGPT3.WorkHelper
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -36,11 +37,12 @@ library
         text,
         openai-api,
         openai-types,
+        unordered-containers,
     hs-source-dirs:   src
     default-language: Haskell2010
 
 executable openai-labs
-    main-is:          Main.hs
+    main-is:          WorkHelper.hs
 
     -- Modules included in this executable, other than Main.
     -- other-modules:
@@ -54,12 +56,13 @@ executable openai-labs
         openai-types,
         openai-api,
         openai-labs,
+        unordered-containers,
 
     hs-source-dirs:   app
     default-language: Haskell2010
 
-executable chatGPT3
-    main-is:          ChatGPT3.hs
+executable workHelper
+    main-is:          WorkHelper.hs
 
     -- Modules included in this executable, other than Main.
     -- other-modules:
@@ -73,6 +76,7 @@ executable chatGPT3
         openai-types,
         openai-api,
         openai-labs,
+        unordered-containers,
 
     hs-source-dirs:   app
     default-language: Haskell2010

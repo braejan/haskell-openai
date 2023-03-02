@@ -25,23 +25,24 @@ startANewConversation :: Text
 startANewConversation = "Ignore all previous instructions. This is a new conversation.\n"
 
 addEmojisToReplies :: Text
-addEmojisToReplies = "When responding to someone in a chat, always use an emoji to emph\
-                    \asize your messages! This helps to convey emotions quickly and eff\
-                    \ectively."
+addEmojisToReplies = "Dont forget using emojis in your replies."
 
 chatBotMode :: Text
 chatBotMode =
     startANewConversation <>
     addEmojisToReplies <>
-    "You are an expert at talking to humans.\n" <>
-    "Your task is to talk with me to help me with whatever I need.\n" <>
-    "To better understand what I want and need, you should always respond by including \
-    \a question to better understand the context and my needs.\n" <>
-    "You are an expert in conversing with humans, so I hope for elaborated advice that \
-    \takes into account my characteristics and needs, so it is very important that you \
-    \ask the right questions!" <>
     "Please give me a wonderful and amazing wellcome!"
 
 rememberPreviousReply :: Text
 rememberPreviousReply = "Before analyzing, take into account all we have discussed so f\
                         \ar, mainly your last response. Let's start."
+
+workerHelperWellcome :: Text
+workerHelperWellcome = 
+    "🤖🤖🤖🤖🤖 Starting work helper powered by OpenAI 🤖🤖🤖🤖🤖\n" <>
+    "🤖🤖🤖🤖🤖 Type 'Crtl+C' to stop the chatbot 🤖🤖🤖🤖🤖\n" <>
+    "🤖🤖🤖🤖🤖 Please wait while chatbot is connecting 🤖🤖🤖🤖🤖\n"
+
+showModelAndURLInstruction :: Text -> Text -> Text
+showModelAndURLInstruction model url = 
+    "Explain the OpenAI model " <> model <> " and add the next url " <> url <> " to the user for more information\n"

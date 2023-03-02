@@ -16,7 +16,7 @@ data Choice = Choice
     -- ^ The index of the choice
   , logprobs :: Maybe [Double]
     -- ^ A list of log probabilities for the generated tokens (if available)
-  , finishReason :: Text
+  , finishReason :: Maybe Text
     -- ^ The reason the text generation was finished (e.g. "length")
   } deriving (Show, Eq, Generic)
 
@@ -29,4 +29,4 @@ instance ToJSON Choice where
   toJSON = genericToJSON defaultOptions { fieldLabelModifier = camelTo2 '_' }
 
 createCompletionChoice :: Choice
-createCompletionChoice = Choice "" 0 Nothing ""
+createCompletionChoice = Choice "" 0 Nothing Nothing
