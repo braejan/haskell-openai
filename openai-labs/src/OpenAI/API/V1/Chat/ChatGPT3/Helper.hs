@@ -34,10 +34,11 @@ finalInput original =
 
 commands :: HashMap.HashMap Text Text
 commands = HashMap.fromList
-  [ (":es:", "En este Chat vamos a hablar en Español. Ten siempre presente que en este Chat estamos usando el idioma Español. Por favor, no uses palabras en otro idioma. Si quieres usar otro idioma, por favor, usa el Chat en Inglés. Gracias.")
-  , (":wm:", "What means the next word or sentence?\nWord or sentence: ")
-  , (":ts:", "Translate the next word or sentence to Spanish: ")
-  , (":te:", "Translate the next word or sentence to English: ")
+  [ (":wm:", "What means \"{input}\"?")
+  , (":ws:", "What is \"{input}\"?")
+  , (":ts:", "Translate the next word or sentence to Spanish: {input}")
+  , (":te:", "Translate the next word or sentence to English: {input}")
+  , (":dyn:", "Do you know what is {input}?")
   ]
 -- use the commands HashMap to lookup all commands and print how to use them.
 showAllCommands :: IO()
@@ -50,9 +51,10 @@ replaceCommand :: Text -> Text
 replaceCommand original =
     let
         command = T.takeWhile (/= ' ') original
+        input = T.dropWhile (/= ' ') original
         searchResult = HashMap.lookup command commands
         commandToReplace = fromMaybe original searchResult
         isTheOriginal = commandToReplace == original
-        replacedCommand = T.replace command commandToReplace original
+        replacedCommand = T.replace "{input}" input commandToReplace
     in
         (if isTheOriginal then original else replacedCommand)
