@@ -34,11 +34,17 @@ finalInput original =
 
 commands :: HashMap.HashMap Text Text
 commands = HashMap.fromList
-  [ (":spanish:", "Translate to Spanish the next text: ")
-  , (":explain:", "Explain the next English word or English phrase in Spanish:")
+  [ (":es:", "En este Chat vamos a hablar en Español. Ten siempre presente que en este Chat estamos usando el idioma Español. Por favor, no uses palabras en otro idioma. Si quieres usar otro idioma, por favor, usa el Chat en Inglés. Gracias.")
+  , (":wm:", "What means the next word or sentence?\nWord or sentence: ")
+  , (":ts:", "Translate the next word or sentence to Spanish: ")
+  , (":te:", "Translate the next word or sentence to English: ")
   ]
-
-
+-- use the commands HashMap to lookup all commands and print how to use them.
+showAllCommands :: IO()
+showAllCommands = do
+    let commandsList = HashMap.toList commands
+    putStrLn "Commands:"
+    mapM_ (\(command, description) -> putStrLn $ T.unpack command <> " " <> T.unpack description) commandsList
 
 replaceCommand :: Text -> Text
 replaceCommand original =

@@ -11,7 +11,7 @@ import OpenAI.API.V1.Util.Completion.ResponseUtil (getChoicesFromResponse)
 import Data.Text (Text)
 import OpenAI.API.V1.Completion.Response (Response)
 import Data.Char (chr)
-import OpenAI.API.V1.Chat.ChatGPT3.Helper (finalInput)
+import OpenAI.API.V1.Chat.ChatGPT3.Helper (finalInput, showAllCommands)
 import Data.Either (fromLeft)
 import qualified Data.Text.IO as T
 
@@ -50,6 +50,7 @@ talk request input = do
 chatBot ::IO()
 chatBot = do
     T.putStrLn workerHelperWellcome
+    showAllCommands
     talk completionRequestChatBot $ Left $ showModelAndURLInstruction modelToUse urlModel
     putStrLn "📝📝📝📝📝 Write to chatbot 📝📝📝📝📝"
     forever $ do
