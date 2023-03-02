@@ -5,6 +5,8 @@ import OpenAI.API.V1.Chat.ChatGPT3.Instruction (rememberPreviousReply)
 import qualified Data.Text as T
 import qualified Data.HashMap.Strict as HashMap
 import Data.Maybe (fromMaybe)
+import System.Console.ANSI (setSGRCode, SGR (SetColor, Reset), ConsoleLayer (Foreground), ColorIntensity (Vivid), Color (Red))
+import Control.Monad.IO.Class (MonadIO(liftIO))
 
 keepTheConversation :: Maybe (Either Text [Text]) -> Maybe (Either Text [Text])
 keepTheConversation input =
@@ -36,9 +38,11 @@ commands :: HashMap.HashMap Text Text
 commands = HashMap.fromList
   [ (":wm:", "What means \"{input}\"?")
   , (":ws:", "What is \"{input}\"?")
-  , (":ts:", "Translate the next word or sentence to Spanish: {input}")
-  , (":te:", "Translate the next word or sentence to English: {input}")
+  , (":ts:", "Translate the next word or sentence to Spanish 🇪🇸: {input}")
+  , (":te:", "Translate the next word or sentence to English 🇺🇸: {input}")
   , (":dyn:", "Do you know what is {input}?")
+  , (":rw:", "Resume the next website: {input}")
+  , (":rws:", "Resume the next website and translate it to Spanish 🇪🇸: {input}")
   ]
 -- use the commands HashMap to lookup all commands and print how to use them.
 showAllCommands :: IO()
